@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import { describe, expect, test } from 'vitest';
 import { renderPage, escapeHtml } from '../src/render.js';
 import { renderLegal, LEGAL_PAGES } from '../src/legal.js';
+import { renderNotFound } from '../src/notfound.js';
 import { LANGS, LANG_PATHS, SITE, content } from '../src/content.js';
 
 const template = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
@@ -56,6 +57,18 @@ describe.each(LANGS)('pre-rendered page "%s"', (lang) => {
 
   test('exactly one h1', () => {
     expect(html.match(/<h1\b/g)).toHaveLength(1);
+  });
+});
+
+describe('404 page', () => {
+  const html = renderNotFound();
+  test('links home in every language and is not indexed', () => {
+    for (const route of Object.values(LANG_PATHS)) expect(html).toContain(`href="${route}"`);
+    expect(html).toContain('<meta name="robots" content="noindex" />');
+  });
+  test('CSP-safe: no inline scripts, styles or event handlers', () => {
+    expect(html).not.toMatch(/<script(?![^>]*\bsrc=)/);
+    expect(html).not.toMatch(/<style|\sstyle="|\son[a-z]+="/);
   });
 });
 

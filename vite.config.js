@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 import { renderPage } from './src/render.js';
 import { LANG_PATHS, SITE, CONTACT } from './src/content.js';
 import { renderLegal, LEGAL_PAGES, legalComplete } from './src/legal.js';
+import { renderNotFound } from './src/notfound.js';
 
 /**
  * Security headers: single source of truth for production (written to dist/_headers for Netlify)
@@ -69,6 +70,11 @@ function portfolioPages() {
     configureServer(server) {
       server.middlewares.use(async (req, res, next) => {
         const url = req.url.split('?')[0];
+        if (url === '/404.html') {
+          res.setHeader('Content-Type', 'text/html; charset=utf-8');
+          res.end(renderNotFound());
+          return;
+        }
         const legal = url.match(/^\/(impressum|datenschutz)\/?$/);
         if (legal) {
           res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -104,6 +110,7 @@ function portfolioPages() {
         writeFile(path.join(outDir, route, 'index.html'), renderPage(template, lang));
       }
       for (const page of LEGAL_PAGES) writeFile(path.join(outDir, page, 'index.html'), renderLegal(page));
+      writeFile(path.join(outDir, '404.html'), renderNotFound()); // Netlify serves it for every unknown URL
 
       const headers = ['/*', ...Object.entries(SECURITY_HEADERS).map(([k, v]) => `  ${k}: ${v}`)];
       for (const [pattern, value] of Object.entries(CACHE_RULES)) headers.push(pattern, `  Cache-Control: ${value}`);

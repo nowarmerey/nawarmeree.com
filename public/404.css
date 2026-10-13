@@ -1,0 +1,51 @@
+:root { color-scheme: dark; --bg: #07090d; --text: #e9eef4; --muted: #8a94a6; --line: rgba(255, 255, 255, 0.1); --green: #39ff9c; --red: #ff4d6d; }
+* { box-sizing: border-box; }
+body {
+  margin: 0; min-height: 100vh; background: var(--bg); color: var(--text);
+  font: 16px/1.6 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.07) 1px, transparent 0); background-size: 32px 32px;
+}
+.nf { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; display: grid; justify-items: center; gap: 28px; text-align: center; }
+.nf__logo { justify-self: start; color: var(--text); text-decoration: none; font-weight: 700; }
+.nf__logo span { color: var(--green); font-family: ui-monospace, Consolas, monospace; text-shadow: 0 0 12px rgba(57, 255, 156, 0.6); }
+
+/* the broken cable */
+.nf__cable { display: flex; align-items: center; width: min(520px, 100%); margin-top: 24px; }
+.nf__wire { height: 4px; flex: 1; border-radius: 2px; background: var(--green); box-shadow: 0 0 10px var(--green); }
+.nf__wire--a { animation: nf-pull-a 3s ease-in-out infinite; transform-origin: left; }
+.nf__wire--b { background: #253041; box-shadow: none; animation: nf-pull-b 3s ease-in-out infinite; transform-origin: right; }
+.nf__plug { width: 18px; height: 14px; border-radius: 3px; background: #10151d; border: 2px solid var(--green); }
+.nf__plug--b { border-color: #3a4558; }
+.nf__spark { width: 10px; height: 10px; margin: 0 14px; border-radius: 50%; background: var(--red); box-shadow: 0 0 14px 4px rgba(255, 77, 109, 0.7); animation: nf-spark 0.9s steps(2) infinite; }
+@keyframes nf-pull-a { 50% { transform: scaleX(0.92); } }
+@keyframes nf-pull-b { 50% { transform: scaleX(0.92); } }
+@keyframes nf-spark { 50% { opacity: 0.2; } }
+
+.nf__code {
+  margin: 0; font-size: clamp(5rem, 22vw, 9rem); line-height: 1; letter-spacing: -0.05em;
+  background: linear-gradient(180deg, #fff, #7a8496); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+.nf__term { width: min(620px, 100%); border-radius: 12px; border: 1px solid var(--line); background: #05070a; text-align: left; overflow: hidden; }
+.nf__bar { display: flex; align-items: center; gap: 6px; padding: 9px 14px; border-bottom: 1px solid var(--line); background: rgba(255, 255, 255, 0.035); }
+.nf__bar i { width: 10px; height: 10px; border-radius: 50%; background: #ff5f57; }
+.nf__bar i:nth-child(2) { background: #febc2e; } .nf__bar i:nth-child(3) { background: #28c840; }
+.nf__bar span { margin-left: auto; font: 0.7rem ui-monospace, Consolas, monospace; color: #7a8496; }
+.nf__out { margin: 0; padding: 14px 16px; font: 0.82rem/1.7 ui-monospace, Consolas, monospace; color: #b8c0cc; white-space: pre-wrap; word-break: break-all; }
+.nf__cmd { color: var(--text); }
+.nf__out > span:not(.nf__cmd) { opacity: 0; animation: nf-line 0.01s forwards; }
+.nf__l1 { animation-delay: 0.6s !important; }
+.nf__l2 { animation-delay: 1.4s !important; }
+.nf__l3 { animation-delay: 2.1s !important; }
+.nf__err { color: var(--red); font-weight: 700; animation-delay: 2.6s !important; }
+@keyframes nf-line { to { opacity: 1; } }
+
+.nf__langs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; width: 100%; margin-top: 8px; }
+.nf__lang { padding: 16px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255, 255, 255, 0.03); }
+.nf__lang h2 { margin: 0; font-size: 1rem; }
+.nf__lang p { margin: 8px 0 14px; font-size: 0.85rem; color: var(--muted); }
+.nf__lang[lang='ar'] { font-family: 'Segoe UI', Tahoma, system-ui, sans-serif; }
+.nf__btn { display: inline-block; padding: 9px 16px; border-radius: 999px; background: var(--green); color: #031008; font-weight: 600; font-size: 0.85rem; text-decoration: none; }
+.nf__btn:focus-visible, .nf__logo:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+@media (max-width: 720px) { .nf__langs { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; } .nf__out > span { opacity: 1 !important; } }
