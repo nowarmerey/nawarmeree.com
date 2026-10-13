@@ -59,23 +59,33 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
 });
 
 // ── scenes ──
-// pinned scenes first: triggers created later then account for the pin spacing
-const mm = gsap.matchMedia();
-const opts = { reduced, mm };
-mount('infra', '#infra', initInfra, opts);
-mount('projects', '#projects', initProjects, opts);
-mount('journey', '#journey', initJourney, opts);
-mount('skills', '#skills', initSkills, opts);
-mount('contact', '#contact', initContact, opts);
-initCredentials(reduced);
+// Above the fold first; everything below is initialised when the main thread is idle (lower TBT on phones).
 initCursor();
-initHeader();
 initMenu();
-initRail();
-initAccentJourney();
-if (!reduced) { initReveals(); initMagnets(); initTilt(); }
-initCounters(reduced);
-mount('hero', '#hero', initHero, opts);
+mount('hero', '#hero', initHero, { reduced });
+
+function initBelowTheFold() {
+  // pinned scenes first: triggers created later then account for the pin spacing
+  const mm = gsap.matchMedia();
+  const opts = { reduced, mm };
+  mount('infra', '#infra', initInfra, opts);
+  mount('projects', '#projects', initProjects, opts);
+  mount('journey', '#journey', initJourney, opts);
+  mount('skills', '#skills', initSkills, opts);
+  mount('contact', '#contact', initContact, opts);
+  initCredentials(reduced);
+  initHeader();
+  initRail();
+  initAccentJourney();
+  if (!reduced) { initReveals(); initMagnets(); initTilt(); }
+  initCounters(reduced);
+  ScrollTrigger.refresh();
+  // a deep link (#skills) must land on the section's final position, after the pins exist
+  const target = window.location.hash && document.querySelector(window.location.hash);
+  if (target) scrollToTarget(target);
+}
+if ('requestIdleCallback' in window) window.requestIdleCallback(initBelowTheFold, { timeout: 1200 });
+else setTimeout(initBelowTheFold, 200);
 
 // fonts change layout heights → recompute pins once they are ready
 document.fonts?.ready.then(() => ScrollTrigger.refresh());

@@ -94,7 +94,12 @@ function portfolioPages() {
     closeBundle() {
       const templateFile = path.join(outDir, 'index.html');
       if (!fs.existsSync(templateFile)) return;
-      const template = fs.readFileSync(templateFile, 'utf8');
+      // preload the two Space Grotesk files the hero needs, so the font swap cannot shift the layout
+      const fontPreloads = fs.readdirSync(path.join(outDir, 'assets'))
+        .filter((f) => /^space-grotesk-latin-(400|700)-normal-.*\.woff2$/.test(f))
+        .map((f) => `<link rel="preload" href="/assets/${f}" as="font" type="font/woff2" crossorigin />`)
+        .join('\n  ');
+      const template = fs.readFileSync(templateFile, 'utf8').replace('</title>', `</title>\n  ${fontPreloads}`);
       for (const [lang, route] of Object.entries(LANG_PATHS)) {
         writeFile(path.join(outDir, route, 'index.html'), renderPage(template, lang));
       }

@@ -44,7 +44,7 @@ html[lang='ar'] .hero__loc { font-family: var(--font-ar); }
 }
 @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
 .avatar__scan {
-  position: absolute; z-index: 3; left: -4%; right: -4%; height: 3px; top: 100%;
+  position: absolute; z-index: 3; left: -4%; right: -4%; height: 3px; top: 0;
   background: var(--accent); box-shadow: 0 0 20px 4px var(--accent); opacity: 0;
 }
 .avatar__logo-glow {
@@ -390,3 +390,4 @@ html[lang='ar'] .footer { font-family: var(--font-ar); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; }
 }
+.hero__name .ch.is-scramble { text-align: center; }

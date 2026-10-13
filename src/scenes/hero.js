@@ -65,8 +65,13 @@ function splitName(el) {
 function scramble(chars, duration = 1.4) {
   const finals = chars.map((c) => c.textContent);
   const state = { p: 0 };
+  // lock every glyph box to its final width: random glyphs then never change the line length (no layout shift)
+  const lock = () => chars.forEach((c) => { c.style.width = `${c.getBoundingClientRect().width}px`; });
+  const unlock = () => chars.forEach((c) => { c.style.width = ''; });
   return gsap.to(state, {
     p: 1, duration, ease: 'none',
+    onStart: lock,
+    onComplete: unlock,
     onUpdate: () => {
       chars.forEach((c, i) => {
         const settle = (i + 1) / chars.length;
@@ -138,8 +143,8 @@ export async function initHero(root, { reduced }) {
   const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
   tl.to(q('.avatar__halo, .avatar__ring'), { opacity: 1, scale: 1, duration: 1.4 }, 0)
     // scan line sweeps up while the image is revealed beneath it
-    .set(q('.avatar__scan'), { opacity: 1, top: '100%' }, 0.1)
-    .to(q('.avatar__scan'), { top: '0%', duration: 1.3, ease: 'power2.inOut' }, 0.1)
+    .set(q('.avatar__scan'), { opacity: 1, y: () => $('#avatar').offsetHeight }, 0.1)
+    .to(q('.avatar__scan'), { y: 0, duration: 1.3, ease: 'power2.inOut' }, 0.1)
     .to(q('.avatar__img'), { clipPath: 'inset(0% 0 0 0)', duration: 1.3, ease: 'power2.inOut' }, 0.1)
     .to(q('.avatar__scan'), { opacity: 0, duration: 0.3 }, 1.4)
     .fromTo(q('.avatar__img'), { filter: 'brightness(2.2) saturate(0)' }, { filter: 'brightness(1) saturate(1)', duration: 1 }, 1.2)
