@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import { describe, expect, test } from 'vitest';
 import { renderPage, escapeHtml } from '../src/render.js';
 import { renderLegal, LEGAL_PAGES } from '../src/legal.js';
-import { LANGS, LANG_PATHS, SITE } from '../src/content.js';
+import { LANGS, LANG_PATHS, SITE, content } from '../src/content.js';
 
 const template = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 
@@ -22,6 +22,14 @@ describe.each(LANGS)('pre-rendered page "%s"', (lang) => {
   test('every translated element has text (crawlers see real content)', () => {
     const empty = [...html.matchAll(/<(\w+)\b[^>]*\bdata-i18n="([^"]+)"[^>]*><\/\1>/g)].map((m) => m[2]);
     expect(empty).toEqual([]);
+  });
+
+  test('every translated element shows exactly its own language (no leftover template text)', () => {
+    const get = (key) => key.split('.').reduce((o, k) => o?.[k], content[lang]);
+    const wrong = [...html.matchAll(/<(\w+)\b[^>]*\bdata-i18n="([^"]+)"[^>]*>([^<]*)<\/\1>/g)]
+      .filter(([, , key, text]) => text !== escapeHtml(get(key)))
+      .map(([, , key, text]) => `${key}: "${text}"`);
+    expect(wrong).toEqual([]);
   });
 
   test('html lang/dir, canonical and hreflang are correct', () => {
