@@ -1,7 +1,7 @@
 // Chapter 0: boot sequence → avatar is "scanned" into existence → a cable leaves the </> logo.
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { t, onLangChange } from '../i18n.js';
+import { t } from '../i18n.js';
 
 const BOOT_LINES = [
   ['dim', '[ 0.000] BIOS v26.10 — nawarmeree.com'],
@@ -22,19 +22,19 @@ function runBoot() {
     let done = false;
     const tl = gsap.timeline({ onComplete: finish });
     BOOT_LINES.forEach(([cls, text], i) => {
-      tl.call(() => { log.innerHTML += `<span class="${cls}">${text}</span>\n`; }, null, i * 0.13);
+      tl.call(() => { log.innerHTML += `<span class="${cls}">${text}</span>\n`; }, null, i * 0.07);
     });
     const bar = { p: 0 };
     tl.call(() => { log.innerHTML += '<span id="bootBar"></span>'; });
     tl.to(bar, {
-      p: 1, duration: 0.6, ease: 'power2.inOut',
+      p: 1, duration: 0.35, ease: 'power2.inOut',
       onUpdate: () => {
         const n = Math.round(bar.p * 20);
         const el = document.getElementById('bootBar');
         if (el) el.textContent = `> loading experience [${'█'.repeat(n)}${'·'.repeat(20 - n)}] ${Math.round(bar.p * 100)}%`;
       },
     });
-    tl.to({}, { duration: 0.25 });
+    tl.to({}, { duration: 0.1 });
 
     function finish() {
       if (done) return;
@@ -91,7 +91,19 @@ function roleTyper(el) {
       .to(s, { n: 0, duration: word.length * 0.025, ease: 'none', delay: 2, onUpdate: () => { el.textContent = word.slice(0, Math.round(s.n)); } });
   };
   cycle();
-  onLangChange(() => { tl?.kill(); idx = 0; cycle(); });
+}
+
+/**
+ * The boot sequence is the visitor's entry ticket: shown once when arriving from outside,
+ * skipped when navigating within the site (language switch, legal pages -> back).
+ * Uses the referrer instead of storage, so the site stores nothing in the browser.
+ */
+function shouldBoot() {
+  try {
+    return !document.referrer || new URL(document.referrer).origin !== window.location.origin;
+  } catch {
+    return true;
+  }
 }
 
 export async function initHero(reduced) {
@@ -100,12 +112,11 @@ export async function initHero(reduced) {
   const role = document.getElementById('heroRole');
   const cablePath = document.getElementById('heroCablePath');
   const len = cablePath.getTotalLength();
-  const textBits = ['.hero__hello', '.hero__role', '.hero__tagline', '.hero__loc', '.hero__cta', '.scroll-hint'];
+  const textBits = ['.hero__hello', '.hero__role', '.hero__tagline', '.hero__loc', '.hero__status', '.hero__cta', '.scroll-hint'];
 
   if (reduced) {
     document.getElementById('boot').remove();
     role.textContent = t('hero.roles')[0];
-    onLangChange(() => { role.textContent = t('hero.roles')[0]; });
     return;
   }
 
@@ -115,7 +126,8 @@ export async function initHero(reduced) {
   gsap.set(['.avatar__halo', '.avatar__ring'], { opacity: 0, scale: 0.8 });
   gsap.set(cablePath, { strokeDasharray: len, strokeDashoffset: len });
 
-  await runBoot();
+  if (shouldBoot()) await runBoot();
+  else document.getElementById('boot').remove();
 
   const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
   tl.to(['.avatar__halo', '.avatar__ring'], { opacity: 1, scale: 1, duration: 1.4 }, 0)

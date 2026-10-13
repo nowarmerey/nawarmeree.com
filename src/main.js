@@ -1,11 +1,23 @@
+// Self-hosted fonts (GDPR: no request to Google). Only the latin (incl. umlauts) and arabic subsets are
+// shipped; unicode-range keeps the Arabic files off non-Arabic pages.
+import '@fontsource/space-grotesk/latin-400.css';
+import '@fontsource/space-grotesk/latin-500.css';
+import '@fontsource/space-grotesk/latin-700.css';
+import '@fontsource/jetbrains-mono/latin-400.css';
+import '@fontsource/jetbrains-mono/latin-500.css';
+import '@fontsource/ibm-plex-sans-arabic/arabic-400.css';
+import '@fontsource/ibm-plex-sans-arabic/arabic-500.css';
+import '@fontsource/ibm-plex-sans-arabic/arabic-700.css';
+
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import Lenis from 'lenis';
 
-import { lang, setLang, onLangChange, applyTexts } from './i18n.js';
-import { renderAll } from './render.js';
-import { initCursor, initHeader, initRail, initAccentJourney, initReveals, initCounters, initMagnets, initTilt, initCredentials } from './scenes/ui.js';
+import { applyTexts } from './i18n.js';
+import {
+  initCursor, initHeader, initMenu, initRail, initAccentJourney, initReveals, initCounters, initMagnets, initTilt, initCredentials,
+} from './scenes/ui.js';
 import { initHero } from './scenes/hero.js';
 import { initInfra } from './scenes/infra.js';
 import { initJourney } from './scenes/journey.js';
@@ -15,18 +27,13 @@ import { initContact } from './scenes/contact.js';
 
 gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
 
-// the story always starts at the beginning
+// the story always starts at the beginning (unless a #section was linked)
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-window.scrollTo(0, 0);
+if (!window.location.hash) window.scrollTo(0, 0);
 
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 document.documentElement.classList.add('js');
 if (reduced) document.documentElement.classList.add('reduced');
-
-// ── content & language ──
-renderAll();
-setLang(lang());
-document.querySelectorAll('[data-lang-btn]').forEach((b) => b.addEventListener('click', () => setLang(b.dataset.langBtn)));
 
 // ── smooth scroll ──
 let lenis = null;
@@ -36,13 +43,19 @@ if (!reduced) {
   gsap.ticker.add((time) => lenis.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);
 }
+const scrollToTarget = (target) => {
+  if (lenis) lenis.scrollTo(target, { offset: 0, duration: 1.6 });
+  else target.scrollIntoView();
+  // move keyboard focus with the scroll (skip link, nav)
+  if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+  target.focus({ preventScroll: true });
+};
 document.querySelectorAll('a[href^="#"]').forEach((a) => {
   a.addEventListener('click', (e) => {
     const target = document.querySelector(a.getAttribute('href'));
     if (!target) return;
     e.preventDefault();
-    if (lenis) lenis.scrollTo(target, { offset: 0, duration: 1.6 });
-    else target.scrollIntoView();
+    scrollToTarget(target);
   });
 });
 
@@ -50,25 +63,21 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
 // pinned scenes first: triggers created later then account for the pin spacing
 const mm = gsap.matchMedia();
 initInfra(reduced, mm);
-const projects = initProjects(reduced, mm);
+initProjects(reduced, mm);
 initJourney(reduced);
 initCredentials(reduced);
 initSkills(reduced);
 initContact(reduced);
 initCursor();
 initHeader();
-const rail = initRail();
+initMenu();
+initRail();
 initAccentJourney();
 if (!reduced) { initReveals(); initMagnets(); initTilt(); }
 initCounters(reduced);
-applyTexts(); // scenes above create nodes with data-i18n keys
+applyTexts(document.getElementById('topo')); // the topology creates its hub nodes at runtime
+applyTexts(document.getElementById('arch'));
 initHero(reduced);
-
-onLangChange(() => {
-  rail.refresh();
-  projects.renderTyped();
-  requestAnimationFrame(() => ScrollTrigger.refresh());
-});
 
 // fonts change layout heights → recompute pins once they are ready
 document.fonts?.ready.then(() => ScrollTrigger.refresh());

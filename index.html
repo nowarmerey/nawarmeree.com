@@ -1,30 +1,40 @@
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="%%LANG%%" dir="%%DIR%%">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Nawar Meree — System Administrator & SaaS Developer</title>
-  <meta name="description" content="From server rooms to the cloud: system administration, networks, SaaS and AI by Nawar Meree." />
+  <title>%%TITLE%%</title>
+  <meta name="description" content="%%DESCRIPTION%%" />
   <meta name="theme-color" content="#07090d" />
-  <link rel="canonical" href="https://nawarmeree.com/" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://nawarmeree.com/" />
-  <meta property="og:title" content="Nawar Meree — From the server room to the cloud" />
-  <meta property="og:description" content="System administrator, network engineer and SaaS developer based in Leverkusen, Germany." />
+  <meta name="color-scheme" content="dark" />
+  <link rel="canonical" href="%%CANONICAL%%" />
+  %%HREFLANG%%
+  <meta property="og:type" content="profile" />
+  <meta property="og:url" content="%%CANONICAL%%" />
+  <meta property="og:title" content="%%TITLE%%" />
+  <meta property="og:description" content="%%DESCRIPTION%%" />
+  <meta property="og:locale" content="%%OG_LOCALE%%" />
+  %%OG_LOCALE_ALT%%
   <meta property="og:image" content="https://nawarmeree.com/img/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Nawar Meree — From the server room to the cloud" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="%%TITLE%%" />
+  <meta name="twitter:description" content="%%DESCRIPTION%%" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="preload" as="image" href="/img/avatar.webp" fetchpriority="high" />
   <link rel="stylesheet" href="/src/styles/base.css" />
   <link rel="stylesheet" href="/src/styles/sections.css" />
+  <script type="application/ld+json">%%JSONLD%%</script>
 </head>
 <body>
+  <a class="skip-link" href="#about" data-i18n="a11y.skip"></a>
+
   <!-- ═════ Boot overlay ═════ -->
   <div class="boot" id="boot" aria-hidden="true">
     <pre class="boot__log" id="bootLog"></pre>
-    <span class="boot__skip" data-i18n="boot.skip">click to skip</span>
+    <span class="boot__skip" data-i18n="boot.skip"></span>
   </div>
 
   <div class="cursor" id="cursor" aria-hidden="true"></div>
@@ -33,18 +43,19 @@
   <!-- ═════ Header ═════ -->
   <header class="header" id="header">
     <a class="logo" href="#top" aria-label="Nawar Meree"><span class="logo__mark">&lt;/&gt;</span><span class="logo__text">nawar</span></a>
-    <nav class="nav" aria-label="Main">
-      <a href="#about" data-i18n="nav.about">About</a>
-      <a href="#infra" data-i18n="nav.infra">Infrastructure</a>
-      <a href="#journey" data-i18n="nav.journey">Journey</a>
-      <a href="#skills" data-i18n="nav.skills">Skills</a>
-      <a href="#projects" data-i18n="nav.projects">Projects</a>
-      <a href="#contact" data-i18n="nav.contact">Contact</a>
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="#about" data-i18n="nav.about"></a>
+      <a href="#infra" data-i18n="nav.infra"></a>
+      <a href="#journey" data-i18n="nav.journey"></a>
+      <a href="#credentials" data-i18n="nav.credentials"></a>
+      <a href="#skills" data-i18n="nav.skills"></a>
+      <a href="#projects" data-i18n="nav.projects"></a>
+      <a href="#contact" data-i18n="nav.contact"></a>
+      <a class="nav__cv" href="%%CV%%" download data-i18n="hero.cv"></a>
     </nav>
-    <div class="langs" role="group" aria-label="Language">
-      <button data-lang-btn="ar" aria-pressed="false">ع</button>
-      <button data-lang-btn="de" aria-pressed="false">DE</button>
-      <button data-lang-btn="en" aria-pressed="false">EN</button>
+    <div class="header__end">
+      <div class="langs" id="langSwitch" role="group" data-i18n-attr="aria-label:a11y.langGroup"></div>
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="nav" data-i18n-attr="aria-label:a11y.menu"><span></span><span></span></button>
     </div>
   </header>
 
@@ -63,19 +74,20 @@
         <div class="hero__text">
           <p class="hero__hello mono"><span class="prompt">$</span> <span data-i18n="hero.hello">Hi, I'm</span></p>
           <h1 class="hero__name" id="heroName">Nawar Meree</h1>
-          <p class="hero__role mono"><span class="role-bracket">[</span><span id="heroRole"></span><span class="caret"></span><span class="role-bracket">]</span></p>
+          <p class="hero__role mono"><span class="sr-only"><span data-i18n="a11y.roles"></span>: <span id="heroRolesSr"></span></span><span aria-hidden="true"><span class="role-bracket">[</span><span id="heroRole"></span><span class="caret"></span><span class="role-bracket">]</span></span></p>
           <p class="hero__tagline" data-i18n="hero.tagline"></p>
-          <p class="hero__loc mono"><span class="dot-live"></span><span data-i18n="hero.location"></span></p>
+          <p class="hero__loc mono"><span class="dot-live" aria-hidden="true"></span><span data-i18n="hero.location"></span></p>
+          <p class="hero__status"><span data-i18n="hero.status"></span></p>
           <div class="hero__cta">
             <a class="btn btn--primary magnetic" href="#contact" data-i18n="hero.cta1"></a>
-            <a class="btn btn--ghost magnetic" href="#projects" data-i18n="hero.cta2"></a>
+            <a class="btn btn--ghost magnetic" href="%%CV%%" download data-i18n="hero.cv"></a>
           </div>
         </div>
         <div class="hero__visual">
           <div class="avatar" id="avatar">
-            <div class="avatar__halo"></div>
+            <div class="avatar__halo" aria-hidden="true"></div>
             <div class="avatar__ring"></div>
-            <img class="avatar__img" src="/img/avatar.webp" alt="Nawar Meree — illustration" width="796" height="900" />
+            <img class="avatar__img" src="/img/avatar.webp" alt="" width="796" height="900" fetchpriority="high" decoding="async" />
             <div class="avatar__scan"></div>
             <span class="avatar__logo-glow"></span>
             <svg class="hero__cable" id="heroCable" viewBox="0 0 100 300" preserveAspectRatio="none" aria-hidden="true">
@@ -125,7 +137,8 @@
               <div><b id="hudTime">100%</b><span data-i18n="infra.hud.2"></span></div>
             </div>
           </div>
-          <ol class="infra__steps" id="infraSteps"></ol>
+          <ol class="infra__steps" id="infraSteps" aria-hidden="true"></ol>
+          <ol class="sr-only" id="infraStepsSr"></ol>
         </div>
         <div class="infra__progress"><span id="infraProgress"></span></div>
       </div>
@@ -162,7 +175,7 @@
         <div class="creds__grid" id="credGrid"></div>
         <div class="creds__foot reveal">
           <p data-i18n="credentials.note"></p>
-          <a class="btn btn--ghost magnetic" id="requestDocs" href="#" data-i18n="credentials.request"></a>
+          <a class="btn btn--ghost magnetic" id="requestDocs" href="%%REQUEST_DOCS%%" data-i18n="credentials.request"></a>
         </div>
       </div>
     </section>
@@ -173,7 +186,8 @@
         <p class="kicker mono reveal" data-i18n="skills.kicker"></p>
         <h2 class="title reveal" data-i18n="skills.title"></h2>
         <p class="sub reveal" data-i18n="skills.hint"></p>
-        <div class="topo reveal" id="topo">
+        <ul class="sr-only" id="skillsSr" data-i18n-attr="aria-label:a11y.skillsList"></ul>
+        <div class="topo reveal" id="topo" aria-hidden="true">
           <svg class="topo__lines" id="topoLines" aria-hidden="true"></svg>
         </div>
       </div>
@@ -197,7 +211,7 @@
               <p class="project__desc" data-i18n="projects.lexai.desc"></p>
               <ul class="project__points" id="lexaiPoints"></ul>
               <ul class="chips" id="lexaiTech"></ul>
-              <a class="btn btn--ghost magnetic" id="lexaiLink" target="_blank" rel="noopener" data-i18n="projects.lexai.code"></a>
+              <a class="btn btn--ghost magnetic" id="lexaiLink" href="%%LEXAI%%" target="_blank" rel="noopener noreferrer" data-i18n="projects.lexai.code"></a>
             </div>
             <div class="rag tilt" id="rag">
               <ol class="rag__steps mono" id="ragSteps"></ol>
@@ -239,8 +253,10 @@
           <h2 class="title title--xl reveal" data-i18n="contact.title"></h2>
           <p class="lead reveal" data-i18n="contact.sub"></p>
           <div class="contact__links reveal">
-            <a class="btn btn--primary magnetic" id="mailBtn" data-i18n="contact.email"></a>
-            <a class="btn btn--ghost magnetic" id="ghBtn" target="_blank" rel="noopener" data-i18n="contact.github"></a>
+            <a class="btn btn--primary magnetic" id="mailBtn" href="%%MAILTO%%" data-i18n="contact.email"></a>
+            <a class="btn btn--ghost magnetic" href="%%CV%%" download data-i18n="hero.cv"></a>
+            <a class="btn btn--ghost magnetic" href="%%LINKEDIN%%" target="_blank" rel="noopener noreferrer" data-i18n="contact.linkedin"></a>
+            <a class="btn btn--ghost magnetic" id="ghBtn" href="%%GITHUB%%" target="_blank" rel="noopener noreferrer" data-i18n="contact.github"></a>
           </div>
         </div>
         <div class="contact__right">
@@ -257,17 +273,17 @@
           </div>
           <div class="term reveal" id="term">
             <div class="term__bar"><i></i><i></i><i></i><span class="mono">nawar@nawarmeree.com</span></div>
-            <div class="term__body mono" id="termBody"></div>
+            <div class="term__body mono" id="termBody" role="log" aria-live="polite"></div>
             <form class="term__form mono" id="termForm" autocomplete="off">
-              <label for="termInput" class="prompt">$</label>
-              <input id="termInput" spellcheck="false" data-i18n-attr="placeholder:contact.hint" />
+              <span class="prompt" aria-hidden="true">$</span>
+              <input id="termInput" spellcheck="false" autocapitalize="off" data-i18n-attr="placeholder:contact.hint;aria-label:a11y.terminal" />
             </form>
           </div>
         </div>
       </div>
       <footer class="footer container mono">
         <span>© 2026 · <span data-i18n="contact.footer"></span></span>
-        <span>nawarmeree.com</span>
+        <span class="footer__links"><a href="/impressum/" data-i18n="legal.imprint"></a><a href="/datenschutz/" data-i18n="legal.privacy"></a></span>
       </footer>
     </section>
   </main>

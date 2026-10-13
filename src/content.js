@@ -4,7 +4,60 @@
 export const CONTACT = {
   email: 'nowarmeree@hotmail.com',
   github: 'https://github.com/nowarmerey',
+  linkedin: 'https://www.linkedin.com/in/nawar-meree-036491164',
   lexaiRepo: 'https://github.com/nowarmerey/pdf-rag-agent',
+};
+
+export const SITE = 'https://nawarmeree.com';
+
+/** Route of every language. German is the default (target market). */
+export const LANG_PATHS = { de: '/', en: '/en/', ar: '/ar/' };
+export const LANGS = Object.keys(LANG_PATHS);
+
+/** Downloadable, sanitised CV (no birth date, nationality, marital status or phone). */
+export const CV_FILES = {
+  de: '/cv/Nawar_Meree_Lebenslauf.pdf',
+  en: '/cv/Nawar_Meree_CV.pdf',
+  ar: '/cv/Nawar_Meree_CV.pdf',
+};
+
+/** Data for the counters in "About". */
+export const STATS = [
+  { value: 4, suffix: '+' }, { value: 1200, suffix: '' }, { value: 250, suffix: '' }, { value: 100, suffix: '' }, { value: 4, suffix: '' },
+];
+
+/** Language bars in "Credentials" (percent of the bar). */
+export const LANG_LEVELS = [100, 72, 72];
+
+/** Skills topology: each skill links to the hubs (projects / employers) where it was used. */
+export const SKILL_HUBS = ['sada', 'berger', 'cobra', 'lexai'];
+export const SKILLS = {
+  infra: [
+    ['Windows Server', ['sada', 'berger']],
+    ['Active Directory · GPO', ['sada']],
+    ['MikroTik', ['sada']],
+    ['Huawei', ['sada']],
+    ['FortiGate', ['sada']],
+    ['Backup & Recovery', ['sada', 'berger', 'cobra']],
+    ['Zabbix', ['sada']],
+    ['Helpdesk · Remote', ['sada', 'berger']],
+    ['Microsoft 365', ['berger']],
+    ['ZKTeco', ['sada']],
+    ['Linux', ['cobra']],
+  ],
+  soft: [
+    ['VBA', ['sada']],
+    ['Python', ['lexai']],
+    ['FastAPI', ['lexai']],
+    ['PostgreSQL', ['lexai', 'cobra']],
+    ['pgvector · RAG', ['lexai']],
+    ['Gemini AI', ['lexai']],
+    ['JWT · Auth', ['lexai', 'cobra']],
+    ['TypeScript', ['cobra']],
+    ['React', ['cobra']],
+    ['Electron', ['cobra']],
+    ['HTML · CSS · JS', ['lexai', 'cobra']],
+  ],
 };
 
 const shared = {
@@ -21,6 +74,10 @@ const shared = {
 export const content = {
   en: {
     ...shared,
+    ogLocale: 'en_US',
+    langNames: { ar: 'العربية', de: 'Deutsch', en: 'English' },
+    a11y: { skip: 'Skip to content', langGroup: 'Language', menu: 'Menu', close: 'Close', terminal: 'Terminal command', skillsList: 'Skills overview', roles: 'Roles' },
+    legal: { imprint: 'Legal notice', privacy: 'Privacy policy' },
     meta: {
       title: 'Nawar Meree — System Administrator & SaaS Developer',
       description: 'From server rooms to the cloud: system administration, networks, SaaS and AI by Nawar Meree.',
@@ -36,6 +93,8 @@ export const content = {
       cta1: 'Get in touch',
       cta2: 'See my work',
       scroll: 'Scroll to start the journey',
+      status: 'Open to new roles · available immediately',
+      cv: 'Download CV (PDF)',
     },
     about: {
       kicker: 'Layer 1 · Physical',
@@ -137,7 +196,8 @@ export const content = {
       hint: 'Type help — or just use the buttons.',
       email: 'Send an email',
       github: 'GitHub',
-      termHelp: 'Available commands: contact · github · email · about · lang ar|de|en · clear',
+      linkedin: 'LinkedIn',
+      termHelp: 'Available commands: contact · github · linkedin · email · cv · about · lang ar|de|en · clear',
       termAbout: 'System administrator turned SaaS builder. Based in Leverkusen.',
       termUnknown: 'command not found — try help',
       footer: 'Designed & built by Nawar Meree',
@@ -146,6 +206,10 @@ export const content = {
 
   de: {
     ...shared,
+    ogLocale: 'de_DE',
+    langNames: { ar: 'العربية', de: 'Deutsch', en: 'English' },
+    a11y: { skip: 'Zum Inhalt springen', langGroup: 'Sprache', menu: 'Menü', close: 'Schließen', terminal: 'Terminal-Befehl', skillsList: 'Übersicht der Skills', roles: 'Rollen' },
+    legal: { imprint: 'Impressum', privacy: 'Datenschutz' },
     meta: {
       title: 'Nawar Meree — Systemadministrator & SaaS-Entwickler',
       description: 'Vom Serverraum in die Cloud: Systemadministration, Netzwerke, SaaS und KI von Nawar Meree.',
@@ -161,6 +225,8 @@ export const content = {
       cta1: 'Kontakt aufnehmen',
       cta2: 'Projekte ansehen',
       scroll: 'Scrollen, um die Reise zu starten',
+      status: 'Offen für neue Stellen · ab sofort verfügbar',
+      cv: 'Lebenslauf (PDF)',
     },
     about: {
       kicker: 'Schicht 1 · Bitübertragung',
@@ -262,7 +328,8 @@ export const content = {
       hint: 'help eintippen – oder einfach die Buttons nutzen.',
       email: 'E-Mail schreiben',
       github: 'GitHub',
-      termHelp: 'Befehle: contact · github · email · about · lang ar|de|en · clear',
+      linkedin: 'LinkedIn',
+      termHelp: 'Befehle: contact · github · linkedin · email · cv · about · lang ar|de|en · clear',
       termAbout: 'Systemadministrator, der jetzt SaaS baut. Wohnhaft in Leverkusen.',
       termUnknown: 'Befehl nicht gefunden – versuche help',
       footer: 'Gestaltet & entwickelt von Nawar Meree',
@@ -271,6 +338,10 @@ export const content = {
 
   ar: {
     ...shared,
+    ogLocale: 'ar_AR',
+    langNames: { ar: 'العربية', de: 'Deutsch', en: 'English' },
+    a11y: { skip: 'انتقل إلى المحتوى', langGroup: 'اللغة', menu: 'القائمة', close: 'إغلاق', terminal: 'أمر الطرفية', skillsList: 'قائمة المهارات', roles: 'الأدوار' },
+    legal: { imprint: 'بيانات الناشر (Impressum)', privacy: 'سياسة الخصوصية (Datenschutz)' },
     meta: {
       title: 'Nawar Meree — مدير أنظمة ومطوّر SaaS',
       description: 'من غرفة السيرفر إلى السحابة: إدارة أنظمة وشبكات وتطوير SaaS وذكاء اصطناعي.',
@@ -286,6 +357,8 @@ export const content = {
       cta1: 'تواصل معي',
       cta2: 'شاهد أعمالي',
       scroll: 'مرّر لتبدأ الرحلة',
+      status: 'متاح لفرص عمل جديدة · جاهز للبدء فوراً',
+      cv: 'السيرة الذاتية (PDF)',
     },
     about: {
       kicker: 'الطبقة 1 · الفيزيائية',
@@ -387,7 +460,8 @@ export const content = {
       hint: 'اكتب help — أو استخدم الأزرار ببساطة.',
       email: 'أرسل بريداً',
       github: 'GitHub',
-      termHelp: 'الأوامر: contact · github · email · about · lang ar|de|en · clear',
+      linkedin: 'LinkedIn',
+      termHelp: 'الأوامر: contact · github · linkedin · email · cv · about · lang ar|de|en · clear',
       termAbout: 'مدير أنظمة صار يبني منصّات SaaS. مقيم في ليفركوزن.',
       termUnknown: 'الأمر غير معروف — جرّب help',
       footer: 'تصميم وتطوير Nawar Meree',

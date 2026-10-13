@@ -36,7 +36,7 @@ export function initHeader() {
       last = y;
     },
   });
-  const links = [...document.querySelectorAll('.nav a')];
+  const links = [...document.querySelectorAll('.nav a[href^="#"]')];
   links.forEach((a) => {
     const section = document.querySelector(a.getAttribute('href'));
     if (!section) return;
@@ -53,10 +53,8 @@ export function initRail() {
   const fill = document.getElementById('railFill');
   const chip = document.getElementById('layerChip');
   const items = [...document.querySelectorAll('#railLayers li')];
-  let active = 0;
 
   const setLayer = (i) => {
-    active = i;
     items.forEach((li, k) => {
       li.classList.toggle('is-active', k === i);
       li.classList.toggle('is-past', k < i || i >= items.length);
@@ -87,7 +85,24 @@ export function initRail() {
     });
   });
   setLayer(0);
-  return { refresh: () => setLayer(active), setLayer };
+}
+
+/** Mobile navigation: the header nav becomes a full-screen panel behind a menu button. */
+export function initMenu() {
+  const btn = document.getElementById('menuBtn');
+  const nav = document.getElementById('nav');
+  const setOpen = (open) => {
+    btn.setAttribute('aria-expanded', String(open));
+    btn.setAttribute('aria-label', t(open ? 'a11y.close' : 'a11y.menu'));
+    nav.classList.toggle('is-open', open);
+    document.documentElement.classList.toggle('menu-open', open);
+  };
+  btn.addEventListener('click', () => setOpen(btn.getAttribute('aria-expanded') !== 'true'));
+  nav.addEventListener('click', (e) => { if (e.target.closest('a')) setOpen(false); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && nav.classList.contains('is-open')) { setOpen(false); btn.focus(); }
+  });
+  matchMedia('(min-width: 901px)').addEventListener('change', (e) => { if (e.matches) setOpen(false); });
 }
 
 /** The accent colour changes with the story's altitude. */
@@ -116,6 +131,7 @@ export function initCounters(reduced) {
     const fmt = (v) => Math.round(v).toLocaleString('en-US');
     if (reduced) { el.textContent = fmt(target); return; }
     const obj = { v: 0 };
+    el.textContent = '0';
     ScrollTrigger.create({
       trigger: el, start: 'top 90%', once: true,
       onEnter: () => gsap.to(obj, { v: target, duration: 2, ease: 'power3.out', onUpdate: () => { el.textContent = fmt(obj.v); } }),

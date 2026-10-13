@@ -23,7 +23,7 @@ function buildRag() {
   let seed = 7;
   const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
   const noise = [];
-  for (let i = 0; i < 26; i++) noise.push(svgEl('circle', { cx: 30 + rand() * 350, cy: 20 + rand() * 210, r: 2.2, class: 'vec', style: 'fill: rgba(255,255,255,0.35)' }, space));
+  for (let i = 0; i < 26; i++) noise.push(svgEl('circle', { cx: 30 + rand() * 350, cy: 20 + rand() * 210, r: 2.2, class: 'vec vec--noise' }, space));
   const links = HITS.map((h) => svgEl('line', { x1: QUERY[0], y1: QUERY[1], x2: CHUNK_VECS[h][0], y2: CHUNK_VECS[h][1], class: 'link' }, space));
   const vecs = CHUNK_VECS.map(([x, y]) => svgEl('circle', { cx: x, cy: y, r: 5, class: 'vec' }, space));
   const q = svgEl('circle', { cx: QUERY[0], cy: QUERY[1], r: 6, class: 'q' }, space);
@@ -120,14 +120,14 @@ function buildArch() {
   const db = svgEl('g', { class: 'arch-node' }, svg);
   svgEl('path', { d: 'M170 208 a50 10 0 0 0 100 0 v40 a50 10 0 0 1 -100 0 Z', class: 'db' }, db);
   svgEl('ellipse', { cx: 220, cy: 208, rx: 50, ry: 10, class: 'db' }, db);
-  [190, 220, 250].forEach((x) => svgEl('line', { x1: x - 15 + 15, y1: 222, x2: x - 15 + 15, y2: 254, class: 'tenant' }, db));
+  [190, 220, 250].forEach((x) => svgEl('line', { x1: x, y1: 222, x2: x, y2: 254, class: 'tenant' }, db));
   svgEl('text', { x: 220, y: 276, class: 's' }, db).textContent = 'PostgreSQL · RLS';
   nodes.push(db);
 
   // LAN badge between cashier stations
   const lan = svgEl('g', { class: 'arch-node' }, svg);
   svgEl('rect', { x: 66, y: 268, width: 58, height: 20, rx: 10, class: 'box' }, lan);
-  const lt = svgEl('text', { x: 95, y: 282, class: 's', style: 'fill: var(--accent)' }, lan);
+  const lt = svgEl('text', { x: 95, y: 282, class: 's s--accent' }, lan);
   lt.textContent = '⇄ LAN';
   nodes.push(lan);
 

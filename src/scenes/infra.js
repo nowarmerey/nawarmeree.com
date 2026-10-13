@@ -27,7 +27,7 @@ function buildScene(svg) {
     const floor = el('g', { class: 'floor' }, svg);
     const top = `${CX},${y - HH} ${CX + HW},${y} ${CX},${y + HH} ${CX - HW},${y}`;
     const sides = `${CX - HW},${y} ${CX},${y + HH} ${CX + HW},${y} ${CX + HW},${y + 9} ${CX},${y + HH + 9} ${CX - HW},${y + 9}`;
-    el('polygon', { points: sides, class: 'slab', style: 'fill: rgba(var(--accent-rgb), 0.08)' }, floor);
+    el('polygon', { points: sides, class: 'slab slab--side' }, floor);
     el('polygon', { points: top, class: 'slab' }, floor);
     el('text', { x: CX + HW + 14, y: y + 4, class: 'label' }, floor).textContent = `F${i + 1}`;
     g.floors.push(floor);
@@ -180,7 +180,7 @@ export function initInfra(reduced, mm) {
   }
 
   const progressBar = document.getElementById('infraProgress');
-  mm.add('(min-width: 0px)', () => {
+  mm.add('all', () => {
     gsap.to(tl, {
       progress: 1, ease: 'none',
       scrollTrigger: {

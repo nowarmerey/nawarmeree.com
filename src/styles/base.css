@@ -8,7 +8,8 @@
   --line-2: rgba(255, 255, 255, 0.16);
   --text: #e9eef4;
   --muted: #8a94a6;
-  --dim: #4b5466;
+  --dim: #7a8496;        /* text on --bg: 5.0:1 (WCAG AA) */
+  --deco: #4b5466;       /* decoration only, never text */
 
   /* The accent colour travels with the story: green terminal → cyan → violet cloud */
   --accent: #39ff9c;
@@ -122,7 +123,7 @@ html[lang='ar'] .title { line-height: 1.3; }
 }
 .boot__log .ok { color: #fff; }
 .boot__log .dim { color: #2c7a52; }
-.boot__skip { position: absolute; top: 20px; inset-inline-end: 24px; font-family: var(--font-mono); font-size: 0.75rem; color: #2c7a52; }
+.boot__skip { position: absolute; top: 20px; inset-inline-end: 24px; font-family: var(--font-mono); font-size: 0.75rem; color: #3aa36c; }
 .boot.is-off { pointer-events: none; }
 
 /* ───────── Header ───────── */
@@ -142,10 +143,40 @@ html[lang='ar'] .title { line-height: 1.3; }
 .nav a:hover, .nav a.is-active { color: var(--text); }
 .nav a.is-active::after { content: ''; position: absolute; inset: auto 0 -6px; height: 2px; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
 .langs { display: flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); }
-.langs button { font-family: var(--font-mono); font-size: 0.75rem; padding: 6px 10px; border-radius: 999px; color: var(--muted); transition: all 0.25s; }
-.langs button[data-lang-btn='ar'] { font-family: var(--font-ar); font-size: 0.85rem; padding-block: 4px; }
-.langs button[aria-pressed='true'] { background: var(--accent); color: #031008; }
-@media (max-width: 900px) { .nav { display: none; } }
+.langs a { font-family: var(--font-mono); font-size: 0.75rem; padding: 6px 10px; border-radius: 999px; color: var(--muted); transition: background 0.25s, color 0.25s; }
+.langs a:hover { color: var(--text); }
+.langs a[data-lang-btn='ar'] { font-family: var(--font-ar); font-size: 0.85rem; padding-block: 4px; }
+.langs a[aria-current='true'] { background: var(--accent); color: #031008; }
+.header__end { display: flex; align-items: center; gap: 10px; }
+.nav__cv { display: none; }
+
+/* mobile menu */
+.menu-btn { display: none; position: relative; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line-2); }
+.menu-btn span { position: absolute; left: 11px; right: 11px; height: 2px; background: var(--text); border-radius: 2px; transition: transform 0.3s var(--ease); }
+.menu-btn span:first-child { top: 15px; }
+.menu-btn span:last-child { top: 23px; }
+.menu-btn[aria-expanded='true'] span:first-child { transform: translateY(4px) rotate(45deg); }
+.menu-btn[aria-expanded='true'] span:last-child { transform: translateY(-4px) rotate(-45deg); }
+@media (max-width: 1080px) {
+  .menu-btn { display: block; }
+  .nav {
+    position: fixed; inset: var(--header-h) 0 0; z-index: -1; flex-direction: column; justify-content: center; align-items: center; gap: 22px;
+    background: rgba(7, 9, 13, 0.97); font-size: 1.4rem; color: var(--text);
+    opacity: 0; visibility: hidden; transition: opacity 0.3s var(--ease), visibility 0.3s;
+  }
+  .nav.is-open { opacity: 1; visibility: visible; }
+  .nav__cv { display: inline-flex; margin-top: 12px; padding: 12px 22px; border-radius: 999px; background: var(--accent); color: #031008 !important; font-size: 1rem; }
+  .nav a.is-active::after { display: none; }
+  html.menu-open .header { background: rgba(7, 9, 13, 0.97); }
+}
+
+/* accessibility helpers */
+.sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.skip-link {
+  position: fixed; z-index: 300; top: 12px; inset-inline-start: 12px; padding: 10px 16px; border-radius: 10px;
+  background: var(--accent); color: #031008; font-weight: 700; transform: translateY(-200%); transition: transform 0.2s;
+}
+.skip-link:focus { transform: none; }
 
 /* ───────── OSI rail ───────── */
 .rail {
@@ -161,7 +192,7 @@ html[lang='ar'] .title { line-height: 1.3; }
   background: #fff; box-shadow: 0 0 6px #fff, 0 0 18px 4px var(--accent);
 }
 .rail__layers { display: flex; flex-direction: column; justify-content: space-between; height: 100%; }
-.rail__layers li { font-family: var(--font-mono); font-size: 0.65rem; color: var(--dim); transition: color 0.3s; white-space: nowrap; line-height: 1; }
+.rail__layers li { font-family: var(--font-mono); font-size: 0.65rem; color: var(--deco); transition: color 0.3s; white-space: nowrap; line-height: 1; }
 .rail__layers li span { display: none; }
 .rail__layers li.is-past { color: var(--muted); }
 .rail__layers li.is-active { color: var(--accent); }

@@ -1,40 +1,10 @@
 // Chapter 6: skills as a live network topology. Skill nodes link to the projects (hubs) where they were used.
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { isRTL, onLangChange } from '../i18n.js';
+import { isRTL } from '../i18n.js';
+import { SKILLS, SKILL_HUBS } from '../content.js';
 
-const HUBS = [
-  { id: 'sada', y: 14 },
-  { id: 'berger', y: 38 },
-  { id: 'cobra', y: 62 },
-  { id: 'lexai', y: 86 },
-];
-const INFRA = [
-  ['Windows Server', ['sada', 'berger']],
-  ['Active Directory · GPO', ['sada']],
-  ['MikroTik', ['sada']],
-  ['Huawei', ['sada']],
-  ['FortiGate', ['sada']],
-  ['Backup & Recovery', ['sada', 'berger', 'cobra']],
-  ['Zabbix', ['sada']],
-  ['Helpdesk · Remote', ['sada', 'berger']],
-  ['Microsoft 365', ['berger']],
-  ['ZKTeco', ['sada']],
-  ['Linux', ['cobra']],
-];
-const SOFT = [
-  ['VBA', ['sada']],
-  ['Python', ['lexai']],
-  ['FastAPI', ['lexai']],
-  ['PostgreSQL', ['lexai', 'cobra']],
-  ['pgvector · RAG', ['lexai']],
-  ['Gemini AI', ['lexai']],
-  ['JWT · Auth', ['lexai', 'cobra']],
-  ['TypeScript', ['cobra']],
-  ['React', ['cobra']],
-  ['Electron', ['cobra']],
-  ['HTML · CSS · JS', ['lexai', 'cobra']],
-];
+const HUB_Y = { sada: 14, berger: 38, cobra: 62, lexai: 86 };
 
 export function initSkills(reduced) {
   const topo = document.getElementById('topo');
@@ -46,29 +16,28 @@ export function initSkills(reduced) {
   hubWrap.className = 'topo__hubs';
   topo.appendChild(hubWrap);
 
-  HUBS.forEach((h) => {
+  SKILL_HUBS.forEach((id) => {
     const b = document.createElement('button');
     b.className = 'node node--hub';
-    b.dataset.i18n = `skills.hubs.${h.id}`;
-    b.style.setProperty('--x', 50); b.style.setProperty('--y', h.y);
+    b.tabIndex = -1; // the topology is a visual twin of the #skillsSr list (aria-hidden)
+    b.dataset.i18n = `skills.hubs.${id}`;
     hubWrap.appendChild(b);
-    hubNodes[h.id] = { el: b, x: 50, y: h.y, links: [] };
+    hubNodes[id] = { el: b, x: 50, y: HUB_Y[id], lines: [] };
   });
 
   const addGroup = (list, side) => list.forEach(([label, hubs], i) => {
     const b = document.createElement('button');
     b.className = `node node--${side}`;
+    b.tabIndex = -1;
     b.textContent = label;
     const y = 5 + (i * 90) / (list.length - 1);
     const zig = i % 2 ? 9 : 0;
     const x = side === 'infra' ? 10 + zig : 90 - zig;
     topo.appendChild(b);
-    const n = { el: b, x, y, hubs, lines: [] };
-    nodes.push(n);
-    hubs.forEach((h) => hubNodes[h].links.push(n));
+    nodes.push({ el: b, x, y, hubs, lines: [] });
   });
-  addGroup(INFRA, 'infra');
-  addGroup(SOFT, 'soft');
+  addGroup(SKILLS.infra, 'infra');
+  addGroup(SKILLS.soft, 'soft');
 
   const legend = document.createElement('div');
   legend.className = 'topo__legend';
@@ -82,7 +51,6 @@ export function initSkills(reduced) {
     svg.appendChild(line);
     const rec = { line, skill: n, hub: hubNodes[h] };
     n.lines.push(rec);
-    hubNodes[h].lines = hubNodes[h].lines || [];
     hubNodes[h].lines.push(rec);
     lines.push(rec);
   }));
@@ -101,8 +69,8 @@ export function initSkills(reduced) {
     });
   };
   layout();
-  window.addEventListener('resize', layout);
-  onLangChange(() => requestAnimationFrame(layout));
+  let resizeFrame = 0;
+  window.addEventListener('resize', () => { cancelAnimationFrame(resizeFrame); resizeFrame = requestAnimationFrame(layout); });
 
   // highlight
   const clear = () => {
@@ -138,6 +106,8 @@ export function initSkills(reduced) {
   gsap.set(all, { opacity: 0, scale: 0.6 });
   gsap.set(svg, { opacity: 0 });
   let trafficOn = false;
+  let onScreen = false;
+  ScrollTrigger.create({ trigger: topo, start: 'top bottom', end: 'bottom top', onToggle: (self) => { onScreen = self.isActive; } });
   ScrollTrigger.create({
     trigger: topo, start: 'top 75%', once: true,
     onEnter: () => {
@@ -148,7 +118,7 @@ export function initSkills(reduced) {
   });
 
   const sendPacket = () => {
-    if (trafficOn && lines.length && document.visibilityState === 'visible' && svg.getBoundingClientRect().height) {
+    if (trafficOn && onScreen && lines.length && document.visibilityState === 'visible' && svg.getBoundingClientRect().height) {
       const { line } = lines[(Math.random() * lines.length) | 0];
       const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       c.setAttribute('r', 2.5); c.setAttribute('class', 'packet');

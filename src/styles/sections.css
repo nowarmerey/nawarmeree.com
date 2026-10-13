@@ -21,7 +21,11 @@ html[lang='ar'] .hero__role { font-family: var(--font-ar); }
 html[lang='ar'] .hero__loc { font-family: var(--font-ar); }
 .dot-live { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0.7); animation: pulse 2s infinite; flex: none; }
 @keyframes pulse { 70% { box-shadow: 0 0 0 10px rgba(var(--accent-rgb), 0); } 100% { box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0); } }
-.hero__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+.hero__status {
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; padding: 6px 12px; border-radius: 999px;
+  border: 1px solid rgba(var(--accent-rgb), 0.35); background: rgba(var(--accent-rgb), 0.08); color: var(--accent); font-size: 0.85rem;
+}
+.hero__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
 
 .hero__visual { position: relative; display: flex; justify-content: center; }
 .avatar { position: relative; width: min(100%, 460px); aspect-ratio: 796 / 900; }
@@ -109,6 +113,7 @@ html[lang='ar'] .infra__head .sub { font-family: var(--font-ar); }
 .infra__scene { position: relative; }
 #building { width: 100%; max-height: 62vh; margin-inline: auto; overflow: visible; }
 #building .slab { fill: rgba(var(--accent-rgb), 0.035); stroke: rgba(var(--accent-rgb), 0.55); stroke-width: 1.2; }
+#building .slab--side { fill: rgba(var(--accent-rgb), 0.08); }
 #building .pillar { stroke: rgba(var(--accent-rgb), 0.3); stroke-width: 1; }
 #building .rack { fill: #0e1520; stroke: rgba(var(--accent-rgb), 0.8); stroke-width: 1; }
 #building .rack-led { fill: var(--accent); }
@@ -297,6 +302,7 @@ html[lang='ar'] .rag__steps { font-family: var(--font-ar); }
 .rag__space { position: absolute; inset: 0; width: 100%; height: 100%; }
 .rag__space .axis { stroke: rgba(255, 255, 255, 0.08); }
 .rag__space .vec { fill: var(--violet); opacity: 0; }
+.rag__space .vec--noise { fill: rgba(255, 255, 255, 0.35); }
 .rag__space .vec.is-hit { fill: var(--green); filter: drop-shadow(0 0 6px var(--green)); }
 .rag__space .q { fill: #fff; opacity: 0; }
 .rag__space .link { stroke: var(--green); stroke-width: 1.2; opacity: 0; }
@@ -317,6 +323,7 @@ html[lang='ar'] .rag__query, html[lang='ar'] .rag__answer { font-family: var(--f
 #arch .box--app { stroke: rgba(var(--accent-rgb), 0.6); }
 #arch .t { font-family: var(--font-sans); font-size: 13px; font-weight: 700; fill: var(--text); text-anchor: middle; }
 #arch .s { font-family: var(--font-mono); font-size: 9.5px; fill: var(--muted); text-anchor: middle; }
+#arch .s--accent { fill: var(--accent); }
 #arch .wire { fill: none; stroke: var(--line-2); stroke-width: 1.2; stroke-dasharray: 3 5; }
 #arch .pkt { fill: var(--accent); filter: drop-shadow(0 0 4px var(--accent)); }
 #arch .pkt--down { fill: var(--violet); filter: drop-shadow(0 0 4px var(--violet)); }
@@ -361,6 +368,8 @@ html[lang='ar'] .port__status { font-family: var(--font-ar); }
 .term__form input { flex: 1; min-width: 0; background: none; border: 0; color: var(--text); font: inherit; font-size: 0.85rem; outline: none; caret-color: var(--accent); }
 .term__form input::placeholder { color: var(--dim); }
 html[lang='ar'] .term__form input::placeholder { font-family: var(--font-ar); }
+.footer__links { display: flex; gap: 18px; }
+.footer__links a:hover { color: var(--text); }
 .footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin-top: clamp(80px, 14vh, 140px); padding-top: 20px; border-top: 1px solid var(--line); font-size: 0.75rem; color: var(--dim); }
 html[lang='ar'] .footer { font-family: var(--font-ar); }
 @media (max-width: 900px) { .contact__grid { grid-template-columns: 1fr; } }

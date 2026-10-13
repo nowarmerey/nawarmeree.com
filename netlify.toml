@@ -1,14 +1,13 @@
+# Security and cache headers are generated into dist/_headers by vite.config.js (single source of truth).
 [build]
   command = "npm run build"
   publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
 
 [[redirects]]
   from = "https://www.nawarmeree.com/*"
   to = "https://nawarmeree.com/:splat"
   status = 301
   force = true
-
-[[headers]]
-  for = "/assets/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"

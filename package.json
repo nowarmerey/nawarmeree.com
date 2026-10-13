@@ -6,13 +6,20 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "cv": "node tools/cv/build-cv.mjs"
   },
   "dependencies": {
+    "@fontsource/ibm-plex-sans-arabic": "^5.2.6",
+    "@fontsource/jetbrains-mono": "^5.2.6",
+    "@fontsource/space-grotesk": "^5.2.8",
     "gsap": "^3.13.0",
     "lenis": "^1.3.4"
   },
   "devDependencies": {
-    "vite": "^6.3.5"
+    "vite": "^6.4.4"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
