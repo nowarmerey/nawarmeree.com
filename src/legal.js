@@ -9,8 +9,8 @@ import { escapeHtml } from './render.js';
  */
 export const LEGAL = {
   name: 'Nawar Meree',
-  street: null, // e.g. 'Musterstraße 1'
-  city: null, //   e.g. '51373 Leverkusen'
+  street: 'Ratherkämp 1',
+  city: '51373 Leverkusen',
   country: 'Deutschland',
   email: CONTACT.email,
   updated: 'Oktober 2026',
