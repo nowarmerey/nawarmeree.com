@@ -1,14 +1,20 @@
 // Chapter 6: skills as a live network topology. Skill nodes link to the projects (hubs) where they were used.
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { isRTL } from '../i18n.js';
+import { isRTL, applyTexts } from '../i18n.js';
 import { SKILLS, SKILL_HUBS } from '../content.js';
+import { scope } from '../lib/scene.js';
 
 const HUB_Y = { sada: 14, berger: 38, cobra: 62, lexai: 86 };
 
-export function initSkills(reduced) {
-  const topo = document.getElementById('topo');
-  const svg = document.getElementById('topoLines');
+/**
+ * @param {HTMLElement} root  #skills
+ * @param {{ reduced: boolean }} opts
+ */
+export function initSkills(root, { reduced }) {
+  const { $ } = scope(root);
+  const topo = $('#topo');
+  const svg = $('#topoLines');
   const nodes = [];
   const hubNodes = {};
 
@@ -43,6 +49,7 @@ export function initSkills(reduced) {
   legend.className = 'topo__legend';
   legend.innerHTML = '<span data-i18n="skills.groups.0"></span><span data-i18n="skills.groups.1"></span>';
   topo.appendChild(legend);
+  applyTexts(topo); // hub and legend labels are created here, after pre-rendering
 
   // lines (one per skill→hub link)
   const lines = [];
@@ -121,10 +128,10 @@ export function initSkills(reduced) {
     if (trafficOn && onScreen && lines.length && document.visibilityState === 'visible' && svg.getBoundingClientRect().height) {
       const { line } = lines[(Math.random() * lines.length) | 0];
       const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      c.setAttribute('r', 2.5); c.setAttribute('class', 'packet');
+      c.setAttribute('r', '2.5'); c.setAttribute('class', 'packet');
       const x1 = +line.getAttribute('x1'), y1 = +line.getAttribute('y1');
       const x2 = +line.getAttribute('x2'), y2 = +line.getAttribute('y2');
-      c.setAttribute('cx', x1); c.setAttribute('cy', y1);
+      c.setAttribute('cx', String(x1)); c.setAttribute('cy', String(y1));
       svg.appendChild(c);
       gsap.to(c, { attr: { cx: x2, cy: y2 }, duration: 1.2, ease: 'power1.inOut', onComplete: () => c.remove() });
     }

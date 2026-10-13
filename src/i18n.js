@@ -15,8 +15,9 @@ export function t(key) {
   return value;
 }
 
+/** @param {ParentNode} [root] */
 export function applyTexts(root = document) {
-  root.querySelectorAll('[data-i18n]').forEach((el) => {
+  (/** @type {NodeListOf<HTMLElement>} */ (root.querySelectorAll('[data-i18n]'))).forEach((el) => {
     const value = t(el.dataset.i18n);
     if (typeof value === 'string') el.textContent = value;
   });

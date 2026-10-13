@@ -2,6 +2,7 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { t } from '../i18n.js';
+import { scope } from '../lib/scene.js';
 
 const BOOT_LINES = [
   ['dim', '[ 0.000] BIOS v26.10 — nawarmeree.com'],
@@ -81,12 +82,11 @@ function scramble(chars, duration = 1.4) {
 
 function roleTyper(el) {
   let idx = 0;
-  let tl;
   const cycle = () => {
     const roles = t('hero.roles');
     const word = roles[idx % roles.length];
     const s = { n: 0 };
-    tl = gsap.timeline({ onComplete: () => { idx++; cycle(); } })
+    gsap.timeline({ onComplete: () => { idx++; cycle(); } })
       .to(s, { n: word.length, duration: word.length * 0.045, ease: 'none', onUpdate: () => { el.textContent = word.slice(0, Math.round(s.n)); } })
       .to(s, { n: 0, duration: word.length * 0.025, ease: 'none', delay: 2, onUpdate: () => { el.textContent = word.slice(0, Math.round(s.n)); } });
   };
@@ -106,40 +106,46 @@ function shouldBoot() {
   }
 }
 
-export async function initHero(reduced) {
-  const nameEl = document.getElementById('heroName');
+/**
+ * @param {HTMLElement} root  #hero (the boot overlay lives outside it, at body level)
+ * @param {{ reduced: boolean }} opts
+ */
+export async function initHero(root, { reduced }) {
+  const { $ } = scope(root);
+  const q = gsap.utils.selector(root);
+  const nameEl = $('#heroName');
   const chars = splitName(nameEl);
-  const role = document.getElementById('heroRole');
-  const cablePath = document.getElementById('heroCablePath');
+  const role = $('#heroRole');
+  const cablePath = /** @type {SVGPathElement} */ ($('#heroCablePath'));
   const len = cablePath.getTotalLength();
-  const textBits = ['.hero__hello', '.hero__role', '.hero__tagline', '.hero__loc', '.hero__status', '.hero__cta', '.scroll-hint'];
+  const textBits = q('.hero__hello, .hero__role, .hero__tagline, .hero__loc, .hero__status, .hero__cta, .scroll-hint');
 
   if (reduced) {
-    document.getElementById('boot').remove();
+    document.getElementById('boot')?.remove();
     role.textContent = t('hero.roles')[0];
     return;
   }
 
   gsap.set(textBits, { opacity: 0, y: 20 });
   gsap.set(chars, { opacity: 0 });
-  gsap.set('.avatar__img', { clipPath: 'inset(100% 0 0 0)' });
-  gsap.set(['.avatar__halo', '.avatar__ring'], { opacity: 0, scale: 0.8 });
+  gsap.set(q('.avatar__img'), { clipPath: 'inset(100% 0 0 0)' });
+  gsap.set(q('.avatar__halo, .avatar__ring'), { opacity: 0, scale: 0.8 });
   gsap.set(cablePath, { strokeDasharray: len, strokeDashoffset: len });
 
   if (shouldBoot()) await runBoot();
-  else document.getElementById('boot').remove();
+  else document.getElementById('boot')?.remove();
 
   const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
-  tl.to(['.avatar__halo', '.avatar__ring'], { opacity: 1, scale: 1, duration: 1.4 }, 0)
+  tl.to(q('.avatar__halo, .avatar__ring'), { opacity: 1, scale: 1, duration: 1.4 }, 0)
     // scan line sweeps up while the image is revealed beneath it
-    .set('.avatar__scan', { opacity: 1, top: '100%' }, 0.1)
-    .to('.avatar__scan', { top: '0%', duration: 1.3, ease: 'power2.inOut' }, 0.1)
-    .to('.avatar__img', { clipPath: 'inset(0% 0 0 0)', duration: 1.3, ease: 'power2.inOut' }, 0.1)
-    .to('.avatar__scan', { opacity: 0, duration: 0.3 }, 1.4)
-    .fromTo('.avatar__img', { filter: 'brightness(2.2) saturate(0)' }, { filter: 'brightness(1) saturate(1)', duration: 1 }, 1.2)
+    .set(q('.avatar__scan'), { opacity: 1, top: '100%' }, 0.1)
+    .to(q('.avatar__scan'), { top: '0%', duration: 1.3, ease: 'power2.inOut' }, 0.1)
+    .to(q('.avatar__img'), { clipPath: 'inset(0% 0 0 0)', duration: 1.3, ease: 'power2.inOut' }, 0.1)
+    .to(q('.avatar__scan'), { opacity: 0, duration: 0.3 }, 1.4)
+    .fromTo(q('.avatar__img'), { filter: 'brightness(2.2) saturate(0)' }, { filter: 'brightness(1) saturate(1)', duration: 1 }, 1.2)
     // the </> logo lights up and a cable leaves it
-    .to('.avatar__logo-glow', { opacity: 1, duration: 0.3, ease: 'power2.out' }, 1.5)
-    .to('.avatar__logo-glow', { scale: 2.2, repeat: 1, yoyo: true, duration: 0.25 }, 1.5)
+    .to(q('.avatar__logo-glow'), { opacity: 1, duration: 0.3, ease: 'power2.out' }, 1.5)
+    .to(q('.avatar__logo-glow'), { scale: 2.2, repeat: 1, yoyo: true, duration: 0.25 }, 1.5)
     .to(cablePath, { strokeDashoffset: 0, duration: 1.6, ease: 'power2.inOut' }, 1.7)
     // name decodes
     .to(chars, { opacity: 1, duration: 0.01, stagger: 0.03 }, 0.3)
@@ -148,16 +154,16 @@ export async function initHero(reduced) {
     .call(() => roleTyper(role), null, 1.2);
 
   // Leaving the hero: avatar floats up and fades, the cable stays attached
-  gsap.timeline({ scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 0.6 } })
-    .to('.hero__text', { y: -120, opacity: 0, ease: 'none' }, 0)
-    .to('.avatar', { y: -60, scale: 0.92, ease: 'none' }, 0)
-    .to('.scroll-hint', { opacity: 0, ease: 'none' }, 0);
+  gsap.timeline({ scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: 0.6 } })
+    .to(q('.hero__text'), { y: -120, opacity: 0, ease: 'none' }, 0)
+    .to(q('.avatar'), { y: -60, scale: 0.92, ease: 'none' }, 0)
+    .to(q('.scroll-hint'), { opacity: 0, ease: 'none' }, 0);
 
   // subtle parallax on the dot grid
   if (matchMedia('(hover: hover)').matches) {
-    const gx = gsap.quickTo('.hero .grid-bg', 'x', { duration: 1.2, ease: 'power3' });
-    const gy = gsap.quickTo('.hero .grid-bg', 'y', { duration: 1.2, ease: 'power3' });
-    const ax = gsap.quickTo('.avatar__img', 'x', { duration: 1.2, ease: 'power3' });
+    const gx = gsap.quickTo(q('.grid-bg'), 'x', { duration: 1.2, ease: 'power3' });
+    const gy = gsap.quickTo(q('.grid-bg'), 'y', { duration: 1.2, ease: 'power3' });
+    const ax = gsap.quickTo(q('.avatar__img'), 'x', { duration: 1.2, ease: 'power3' });
     window.addEventListener('pointermove', (e) => {
       const dx = e.clientX / innerWidth - 0.5;
       const dy = e.clientY / innerHeight - 0.5;

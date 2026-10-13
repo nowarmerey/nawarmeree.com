@@ -138,6 +138,14 @@ html[lang='ar'] .hud span { font-family: var(--font-ar); }
 .infra__steps .num { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); }
 .infra__steps h3 { font-size: clamp(1.25rem, 2.2vw, 1.75rem); margin-top: 10px; line-height: 1.2; }
 .infra__steps p { color: #b8c0cc; margin-top: 12px; }
+.skip-scene {
+  position: absolute; z-index: 5; bottom: 30px; inset-inline-end: var(--gutter); padding: 6px 12px; border-radius: 999px;
+  font-size: 0.72rem; color: var(--muted); border: 1px solid var(--line); background: rgba(7, 9, 13, 0.7); transition: color 0.2s, border-color 0.2s;
+}
+html[lang='ar'] .skip-scene { font-family: var(--font-ar); }
+.skip-scene:hover, .skip-scene:focus-visible { color: var(--accent); border-color: var(--accent); }
+.lexai__pin { position: relative; }
+@media (max-width: 900px) { .lexai__pin .skip-scene { display: none; } }
 .infra__progress { position: absolute; inset: auto var(--gutter) 18px; height: 2px; background: var(--line); border-radius: 2px; }
 .infra__progress span { display: block; height: 100%; width: 0; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
 @media (max-width: 900px) {

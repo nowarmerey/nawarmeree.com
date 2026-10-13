@@ -3,11 +3,17 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { t, lang, goToLang } from '../i18n.js';
 import { CONTACT, CV_FILES, LANG_PATHS } from '../content.js';
+import { scope } from '../lib/scene.js';
 
-export function initContact(reduced) {
-  const body = document.getElementById('termBody');
-  const form = document.getElementById('termForm');
-  const input = document.getElementById('termInput');
+/**
+ * @param {HTMLElement} root  #contact
+ * @param {{ reduced: boolean }} opts
+ */
+export function initContact(root, { reduced }) {
+  const { $, $$ } = scope(root);
+  const body = $('#termBody');
+  const form = /** @type {HTMLFormElement} */ ($('#termForm'));
+  const input = /** @type {HTMLInputElement} */ ($('#termInput'));
 
   /**
    * Append one output line. `parts` are plain strings (inserted as text, never as HTML)
@@ -70,8 +76,8 @@ export function initContact(reduced) {
   };
   form.addEventListener('submit', (e) => { e.preventDefault(); run(input.value); input.value = ''; });
 
-  const leds = document.querySelectorAll('.port__led');
-  const cable = document.getElementById('portCable');
+  const leds = $$('.port__led');
+  const cable = $('#portCable');
 
   const greet = () => {
     if (body.childElementCount) return;
@@ -87,12 +93,12 @@ export function initContact(reduced) {
 
   gsap.set(cable, { y: -60 });
   ScrollTrigger.create({
-    trigger: '#port', start: 'top 80%', once: true,
+    trigger: $('#port'), start: 'top 80%', once: true,
     onEnter: () => {
       gsap.timeline()
         .to(cable, { y: 0, duration: 0.8, ease: 'bounce.out' })
         .call(() => leds.forEach((l) => l.classList.add('is-on')))
-        .fromTo('.port__status', { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.5 })
+        .fromTo($('.port__status'), { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.5 })
         .call(greet);
     },
   });

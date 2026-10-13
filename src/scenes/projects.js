@@ -1,7 +1,8 @@
 // Chapter 7: LexAI explains RAG visually (pinned on desktop, looping on mobile); Cobra SaaS shows live sync.
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { t } from '../i18n.js';
+import { t, applyTexts } from '../i18n.js';
+import { scope } from '../lib/scene.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const svgEl = (tag, attrs, parent) => {
@@ -16,8 +17,9 @@ const CHUNK_VECS = [[90, 70], [262, 96], [70, 190], [330, 200], [292, 128], [160
 const HITS = [1, 4, 6];
 const QUERY = [282, 102];
 
-function buildRag() {
-  const space = document.getElementById('ragSpace');
+/** @param {ReturnType<typeof scope>['$']} $ */
+function buildRag($) {
+  const space = $('#ragSpace');
   svgEl('line', { x1: 20, y1: 240, x2: 390, y2: 240, class: 'axis' }, space);
   svgEl('line', { x1: 20, y1: 240, x2: 20, y2: 14, class: 'axis' }, space);
   let seed = 7;
@@ -28,8 +30,8 @@ function buildRag() {
   const vecs = CHUNK_VECS.map(([x, y]) => svgEl('circle', { cx: x, cy: y, r: 5, class: 'vec' }, space));
   const q = svgEl('circle', { cx: QUERY[0], cy: QUERY[1], r: 6, class: 'q' }, space);
 
-  const chunkWrap = document.getElementById('ragChunks');
-  const chunks = CHUNK_VECS.map((_, i) => {
+  const chunkWrap = $('#ragChunks');
+  const chunks = CHUNK_VECS.map(() => {
     const c = document.createElement('div');
     c.className = 'rag__chunk';
     chunkWrap.appendChild(c);
@@ -38,10 +40,14 @@ function buildRag() {
   return { noise, links, vecs, q, chunks };
 }
 
-function ragTimeline(parts) {
-  const steps = [...document.querySelectorAll('#ragSteps li')];
-  const qText = document.getElementById('ragQueryText');
-  const aText = document.getElementById('ragAnswerText');
+/**
+ * @param {ReturnType<typeof buildRag>} parts
+ * @param {ReturnType<typeof scope>} dom
+ */
+function ragTimeline(parts, { $, $$ }) {
+  const steps = $$('#ragSteps li');
+  const qText = $('#ragQueryText');
+  const aText = $('#ragAnswerText');
   const typed = { q: 0, a: 0 };
   const renderTyped = () => {
     const q = t('projects.lexai.query'); const a = t('projects.lexai.answer');
@@ -55,21 +61,22 @@ function ragTimeline(parts) {
   };
 
   const { noise, links, vecs, q, chunks } = parts;
-  gsap.set('#ragDoc', { opacity: 0, y: 80, scale: 0.7 });
+  const doc = $('#ragDoc');
+  gsap.set(doc, { opacity: 0, y: 80, scale: 0.7 });
   gsap.set(chunks, { left: '50%', top: '50%', xPercent: -50, yPercent: -50, opacity: 0, scale: 1 });
   gsap.set([...noise, ...vecs, q, ...links], { opacity: 0 });
-  gsap.set(['#ragQuery', '#ragAnswer'], { opacity: 0, y: 10 });
+  gsap.set([$('#ragQuery'), $('#ragAnswer')], { opacity: 0, y: 10 });
 
   const tl = gsap.timeline({ defaults: { ease: 'power2.out' }, onUpdate: () => markStep(tl.time()) });
   // 1 upload
-  tl.to('#ragDoc', { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: 'back.out(1.6)' }, 0)
+  tl.to(doc, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: 'back.out(1.6)' }, 0)
   // 2 chunk: document splits into pieces
     .to(chunks, {
       opacity: 1, duration: 0.3,
       left: (i) => `${50 + ((i % 2) - 0.5) * 18}%`, top: (i) => `${32 + Math.floor(i / 2) * 12}%`,
       stagger: 0.04,
     }, 0.8)
-    .to('#ragDoc', { opacity: 0, scale: 1.1, duration: 0.3 }, 0.9)
+    .to(doc, { opacity: 0, scale: 1.1, duration: 0.3 }, 0.9)
   // 3 embed: pieces fly into vector space and become points
     .to(chunks, {
       left: (i) => `${(CHUNK_VECS[i][0] / 400) * 100}%`, top: (i) => `${(CHUNK_VECS[i][1] / 260) * 100}%`,
@@ -79,21 +86,22 @@ function ragTimeline(parts) {
     .to(vecs, { opacity: 1, duration: 0.2, stagger: 0.03 }, 2.15)
     .to(noise, { opacity: 1, duration: 0.3, stagger: 0.01 }, 2.2)
   // 4 retrieve: a question is asked, nearest neighbours light up
-    .to('#ragQuery', { opacity: 1, y: 0, duration: 0.3 }, 2.7)
+    .to($('#ragQuery'), { opacity: 1, y: 0, duration: 0.3 }, 2.7)
     .to(typed, { q: 1, duration: 0.6, ease: 'none', onUpdate: renderTyped }, 2.8)
     .to(q, { opacity: 1, duration: 0.2 }, 3.3)
     .to(links, { opacity: 1, duration: 0.3, stagger: 0.1 }, 3.4)
     .call(() => HITS.forEach((h) => vecs[h].classList.add('is-hit')), null, 3.5)
     .call(() => HITS.forEach((h) => vecs[h].classList.remove('is-hit')), null, 3.49)
   // 5 answer
-    .to('#ragAnswer', { opacity: 1, y: 0, duration: 0.3 }, 3.9)
+    .to($('#ragAnswer'), { opacity: 1, y: 0, duration: 0.3 }, 3.9)
     .to(typed, { a: 1, duration: 0.8, ease: 'none', onUpdate: renderTyped }, 4.0)
     .to({}, { duration: 0.5 });
   return { tl, renderTyped };
 }
 
-function buildArch() {
-  const svg = document.getElementById('arch');
+/** @param {ReturnType<typeof scope>['$']} $ */
+function buildArch($) {
+  const svg = $('#arch');
   const box = (x, y, w, h, title, sub, cls, key) => {
     const g = svgEl('g', { class: 'arch-node' }, svg);
     svgEl('rect', { x, y, width: w, height: h, rx: 10, class: `box ${cls || ''}` }, g);
@@ -134,13 +142,20 @@ function buildArch() {
   return { svg, wires, nodes };
 }
 
-export function initProjects(reduced, mm) {
-  const parts = buildRag();
-  const { tl, renderTyped } = ragTimeline(parts);
+/**
+ * @param {HTMLElement} root  #projects
+ * @param {{ reduced: boolean, mm: gsap.MatchMedia }} opts
+ */
+export function initProjects(root, { reduced, mm }) {
+  const dom = scope(root);
+  const { $ } = dom;
+  const parts = buildRag($);
+  const { tl, renderTyped } = ragTimeline(parts, dom);
   tl.pause();
   renderTyped();
 
-  const arch = buildArch();
+  const arch = buildArch($);
+  applyTexts(arch.svg);
 
   if (reduced) {
     tl.progress(1);
@@ -150,31 +165,38 @@ export function initProjects(reduced, mm) {
   mm.add('(min-width: 901px)', () => {
     gsap.to(tl, {
       progress: 1, ease: 'none',
-      scrollTrigger: { trigger: '.lexai__pin', pin: true, start: 'top top', end: () => `+=${innerHeight * 2.4}`, scrub: 0.8, anticipatePin: 1 },
+      scrollTrigger: { trigger: $('.lexai__pin'), pin: true, start: 'top top', end: () => `+=${innerHeight * 1.8}`, scrub: 0.8, anticipatePin: 1 },
     });
   });
   mm.add('(max-width: 900px)', () => {
     const st = ScrollTrigger.create({
-      trigger: '#rag', start: 'top 70%', once: true,
+      trigger: $('#rag'), start: 'top 70%', once: true,
       onEnter: () => { tl.restart(); tl.repeat(-1).repeatDelay(2.5); },
     });
     return () => { st.kill(); tl.repeat(0); tl.pause(0); };
   });
 
-  // Cobra architecture: draw-in, then endless bidirectional sync packets
+  // Cobra architecture: draw-in, then endless bidirectional sync packets — running only while on screen
   gsap.set(arch.nodes, { opacity: 0, y: 14 });
+  /** @type {gsap.core.Tween[]} */
+  const loops = [];
+  arch.wires.forEach((w, i) => {
+    const up = svgEl('circle', { r: 4, class: 'pkt' }, arch.svg);
+    const down = svgEl('circle', { r: 4, class: 'pkt pkt--down' }, arch.svg);
+    const path = { path: w, align: w, alignOrigin: [0.5, 0.5] };
+    gsap.set([up, down], { opacity: 0 });
+    loops.push(
+      gsap.fromTo(up, { opacity: 1 }, { motionPath: path, duration: 1.6, repeat: -1, repeatDelay: 0.6 + i * 0.3, ease: 'power1.inOut', delay: 1 + i * 0.2, paused: true }),
+      gsap.fromTo(down, { opacity: 1 }, { motionPath: { ...path, start: 1, end: 0 }, duration: 1.6, repeat: -1, repeatDelay: 0.9 + i * 0.2, ease: 'power1.inOut', delay: 1.8 + i * 0.25, paused: true }),
+    );
+  });
   ScrollTrigger.create({
     trigger: arch.svg, start: 'top 80%', once: true,
-    onEnter: () => {
-      gsap.to(arch.nodes, { opacity: 1, y: 0, duration: 0.6, stagger: 0.12, ease: 'back.out(1.8)' });
-      arch.wires.forEach((w, i) => {
-        const up = svgEl('circle', { r: 4, class: 'pkt' }, arch.svg);
-        const down = svgEl('circle', { r: 4, class: 'pkt pkt--down' }, arch.svg);
-        const path = { path: w, align: w, alignOrigin: [0.5, 0.5] };
-        gsap.to(up, { motionPath: path, duration: 1.6, repeat: -1, repeatDelay: 0.6 + i * 0.3, ease: 'power1.inOut', delay: 1 + i * 0.2 });
-        gsap.to(down, { motionPath: { ...path, start: 1, end: 0 }, duration: 1.6, repeat: -1, repeatDelay: 0.9 + i * 0.2, ease: 'power1.inOut', delay: 1.8 + i * 0.25 });
-      });
-    },
+    onEnter: () => gsap.to(arch.nodes, { opacity: 1, y: 0, duration: 0.6, stagger: 0.12, ease: 'back.out(1.8)' }),
+  });
+  ScrollTrigger.create({
+    trigger: arch.svg, start: 'top 80%', end: 'bottom top',
+    onToggle: (self) => loops.forEach((tw) => (self.isActive ? tw.play() : tw.pause())),
   });
   return { renderTyped };
 }

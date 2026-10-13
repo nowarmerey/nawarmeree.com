@@ -22,7 +22,21 @@ Privacy & security: self-hosted fonts, no cookies, no tracking, no browser stora
 Security/cache headers are defined once in `vite.config.js` → written to `dist/_headers` (Netlify) and used by `vite preview`.
 
 ## Stack
-Vite · vanilla JS · GSAP (ScrollTrigger, MotionPath) · Lenis
+Vite · vanilla JS (type-checked with `// @ts-check`-style JSDoc via `tsc`) · GSAP (ScrollTrigger, MotionPath) · Lenis
+
+## Architecture
+```
+src/
+  content.js        all texts (ar/de/en) + data: links, skills, stats, routes, CV files
+  render.js         pure HTML builders — pre-renders every language at build time (Node) — no DOM
+  legal.js          Impressum / Datenschutz pages
+  i18n.js           runtime lookup for nodes created after pre-rendering
+  lib/scene.js      mount(name, root, init) — scene isolation; scope(root) — $ / $$ bound to a root
+  scenes/*.js       one file per chapter; each receives its own root element and queries only inside it
+  styles/           base (tokens, layout chrome) + sections
+test/               i18n parity + pre-render guarantees (tokens, empty texts, hreflang, JSON-LD, CSP-safe markup)
+tools/cv/           sanitised CV generator
+```
 
 ## Commands
 ```bash
@@ -31,6 +45,7 @@ npm run dev        # http://localhost:5180  (/, /en/, /ar/, /impressum/, /datens
 npm run build      # → dist/  (fails until the Impressum address is filled in src/legal.js)
 npm run preview    # serves dist/ with the production security headers
 npm run cv         # regenerates public/cv/*.pdf (needs Edge or Chrome)
+npm run check      # lint + typecheck + tests (same as CI)
 ```
 For a local test build without the address: `ALLOW_INCOMPLETE_LEGAL=1 npm run build`.
 

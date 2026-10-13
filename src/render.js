@@ -1,7 +1,7 @@
 // Pure HTML builders, run at build time (and by the dev server) to pre-render every language.
 // No DOM access here: this module is imported by vite.config.js under Node.
 import {
-  content, CONTACT, SITE, LANG_PATHS, LANGS, CV_FILES, STATS, LANG_LEVELS, SKILLS, SKILL_HUBS,
+  content, CONTACT, SITE, LANG_PATHS, LANGS, CV_FILES, STATS, LANG_LEVELS, SKILLS,
 } from './content.js';
 
 export const escapeHtml = (s) => String(s)

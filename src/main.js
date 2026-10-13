@@ -14,7 +14,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import Lenis from 'lenis';
 
-import { applyTexts } from './i18n.js';
+import { mount } from './lib/scene.js';
 import {
   initCursor, initHeader, initMenu, initRail, initAccentJourney, initReveals, initCounters, initMagnets, initTilt, initCredentials,
 } from './scenes/ui.js';
@@ -62,12 +62,13 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
 // ── scenes ──
 // pinned scenes first: triggers created later then account for the pin spacing
 const mm = gsap.matchMedia();
-initInfra(reduced, mm);
-initProjects(reduced, mm);
-initJourney(reduced);
+const opts = { reduced, mm };
+mount('infra', '#infra', initInfra, opts);
+mount('projects', '#projects', initProjects, opts);
+mount('journey', '#journey', initJourney, opts);
+mount('skills', '#skills', initSkills, opts);
+mount('contact', '#contact', initContact, opts);
 initCredentials(reduced);
-initSkills(reduced);
-initContact(reduced);
 initCursor();
 initHeader();
 initMenu();
@@ -75,9 +76,7 @@ initRail();
 initAccentJourney();
 if (!reduced) { initReveals(); initMagnets(); initTilt(); }
 initCounters(reduced);
-applyTexts(document.getElementById('topo')); // the topology creates its hub nodes at runtime
-applyTexts(document.getElementById('arch'));
-initHero(reduced);
+mount('hero', '#hero', initHero, opts);
 
 // fonts change layout heights → recompute pins once they are ready
 document.fonts?.ready.then(() => ScrollTrigger.refresh());

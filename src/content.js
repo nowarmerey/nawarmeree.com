@@ -31,6 +31,7 @@ export const LANG_LEVELS = [100, 72, 72];
 
 /** Skills topology: each skill links to the hubs (projects / employers) where it was used. */
 export const SKILL_HUBS = ['sada', 'berger', 'cobra', 'lexai'];
+/** @type {{ infra: Array<[string, string[]]>, soft: Array<[string, string[]]> }} */
 export const SKILLS = {
   infra: [
     ['Windows Server', ['sada', 'berger']],
@@ -75,6 +76,7 @@ export const content = {
   en: {
     ...shared,
     ogLocale: 'en_US',
+    skipScene: 'Skip scene ↓',
     langNames: { ar: 'العربية', de: 'Deutsch', en: 'English' },
     a11y: { skip: 'Skip to content', langGroup: 'Language', menu: 'Menu', close: 'Close', terminal: 'Terminal command', skillsList: 'Skills overview', roles: 'Roles' },
     legal: { imprint: 'Legal notice', privacy: 'Privacy policy' },
@@ -207,6 +209,7 @@ export const content = {
   de: {
     ...shared,
     ogLocale: 'de_DE',
+    skipScene: 'Szene überspringen ↓',
     langNames: { ar: 'العربية', de: 'Deutsch', en: 'English' },
     a11y: { skip: 'Zum Inhalt springen', langGroup: 'Sprache', menu: 'Menü', close: 'Schließen', terminal: 'Terminal-Befehl', skillsList: 'Übersicht der Skills', roles: 'Rollen' },
     legal: { imprint: 'Impressum', privacy: 'Datenschutz' },
@@ -339,6 +342,7 @@ export const content = {
   ar: {
     ...shared,
     ogLocale: 'ar_AR',
+    skipScene: 'تخطَّ المشهد ↓',
     langNames: { ar: 'العربية', de: 'Deutsch', en: 'English' },
     a11y: { skip: 'انتقل إلى المحتوى', langGroup: 'اللغة', menu: 'القائمة', close: 'إغلاق', terminal: 'أمر الطرفية', skillsList: 'قائمة المهارات', roles: 'الأدوار' },
     legal: { imprint: 'بيانات الناشر (Impressum)', privacy: 'سياسة الخصوصية (Datenschutz)' },

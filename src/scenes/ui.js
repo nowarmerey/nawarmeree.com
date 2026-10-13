@@ -19,7 +19,7 @@ export function initCursor() {
     xTo(e.clientX); yTo(e.clientY);
   });
   document.addEventListener('pointerover', (e) => {
-    cursor.classList.toggle('is-hover', !!e.target.closest('a, button, .node, .cred, input'));
+    cursor.classList.toggle('is-hover', !!(/** @type {Element} */ (e.target)).closest('a, button, .node, .cred, input'));
   });
   document.addEventListener('pointerleave', () => cursor.classList.remove('is-on'));
 }
@@ -77,7 +77,7 @@ export function initRail() {
     },
   });
 
-  document.querySelectorAll('[data-layer]').forEach((section) => {
+  (/** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('[data-layer]'))).forEach((section) => {
     const layer = Number(section.dataset.layer);
     ScrollTrigger.create({
       trigger: section, start: 'top 55%', end: 'bottom 55%',
@@ -98,7 +98,7 @@ export function initMenu() {
     document.documentElement.classList.toggle('menu-open', open);
   };
   btn.addEventListener('click', () => setOpen(btn.getAttribute('aria-expanded') !== 'true'));
-  nav.addEventListener('click', (e) => { if (e.target.closest('a')) setOpen(false); });
+  nav.addEventListener('click', (e) => { if ((/** @type {Element} */ (e.target)).closest('a')) setOpen(false); });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && nav.classList.contains('is-open')) { setOpen(false); btn.focus(); }
   });
@@ -126,7 +126,7 @@ export function initReveals() {
 }
 
 export function initCounters(reduced) {
-  document.querySelectorAll('[data-count]').forEach((el) => {
+  (/** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('[data-count]'))).forEach((el) => {
     const target = Number(el.dataset.count);
     const fmt = (v) => Math.round(v).toLocaleString('en-US');
     if (reduced) { el.textContent = fmt(target); return; }
@@ -141,7 +141,7 @@ export function initCounters(reduced) {
 
 export function initMagnets() {
   if (!matchMedia('(hover: hover)').matches) return;
-  document.querySelectorAll('.magnetic').forEach((el) => {
+  (/** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('.magnetic'))).forEach((el) => {
     const xTo = gsap.quickTo(el, 'x', { duration: 0.5, ease: 'elastic.out(1, 0.4)' });
     const yTo = gsap.quickTo(el, 'y', { duration: 0.5, ease: 'elastic.out(1, 0.4)' });
     el.addEventListener('pointermove', (e) => {
@@ -155,7 +155,7 @@ export function initMagnets() {
 
 export function initTilt() {
   if (!matchMedia('(hover: hover)').matches) return;
-  document.querySelectorAll('.tilt').forEach((el) => {
+  (/** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('.tilt'))).forEach((el) => {
     const rx = gsap.quickTo(el, 'rotationX', { duration: 0.6, ease: 'power3' });
     const ry = gsap.quickTo(el, 'rotationY', { duration: 0.6, ease: 'power3' });
     gsap.set(el, { transformPerspective: 1000 });
@@ -169,7 +169,7 @@ export function initTilt() {
 }
 
 export function initCredentials(reduced) {
-  document.querySelectorAll('.cred[role="button"]').forEach((card) => {
+  (/** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('.cred[role="button"]'))).forEach((card) => {
     const flip = () => {
       card.classList.toggle('is-flipped');
       card.setAttribute('aria-pressed', String(card.classList.contains('is-flipped')));
@@ -177,7 +177,7 @@ export function initCredentials(reduced) {
     card.addEventListener('click', flip);
     card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
   });
-  document.querySelectorAll('.lang-bar i').forEach((bar) => {
+  (/** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('.lang-bar i'))).forEach((bar) => {
     const w = `${bar.dataset.w}%`;
     if (reduced) { bar.style.width = w; return; }
     ScrollTrigger.create({ trigger: bar, start: 'top 92%', once: true, onEnter: () => gsap.to(bar, { width: w, duration: 1.6, ease: 'expo.out' }) });

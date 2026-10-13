@@ -1,5 +1,6 @@
 // Chapter 2: a 4-floor plant is wired up floor by floor while the visitor scrolls (pinned scene).
 import { gsap } from 'gsap';
+import { scope } from '../lib/scene.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const CX = 300, HW = 200, HH = 80, FLOOR_GAP = 110, BASE_Y = 500, FLOORS = 4;
@@ -94,14 +95,19 @@ const dash = (node) => {
   gsap.set(node, { strokeDasharray: len, strokeDashoffset: len });
 };
 
-export function initInfra(reduced, mm) {
-  const svg = document.getElementById('building');
+/**
+ * @param {HTMLElement} root  #infra
+ * @param {{ reduced: boolean, mm: gsap.MatchMedia }} opts
+ */
+export function initInfra(root, { reduced, mm }) {
+  const { $, $$ } = scope(root);
+  const svg = $('#building');
   const g = buildScene(svg);
-  const steps = [...document.querySelectorAll('#infraSteps li')];
-  const hud = { devices: document.getElementById('hudDevices'), floors: document.getElementById('hudFloors'), time: document.getElementById('hudTime') };
+  const steps = $$('#infraSteps li');
+  const hud = { devices: $('#hudDevices'), floors: $('#hudFloors'), time: $('#hudTime') };
   const counters = { devices: 0, floors: 0, time: 100 };
   const renderHud = () => {
-    hud.devices.textContent = Math.round(counters.devices);
+    hud.devices.textContent = String(Math.round(counters.devices));
     hud.floors.textContent = `${Math.round(counters.floors)}/4`;
     hud.time.textContent = `${Math.round(counters.time)}%`;
   };
@@ -175,16 +181,16 @@ export function initInfra(reduced, mm) {
   if (reduced) {
     tl.progress(1);
     gsap.set(steps, { autoAlpha: 1, y: 0 });
-    document.querySelector('.infra__steps').classList.add('is-static');
+    $('.infra__steps').classList.add('is-static');
     return;
   }
 
-  const progressBar = document.getElementById('infraProgress');
+  const progressBar = $('#infraProgress');
   mm.add('all', () => {
     gsap.to(tl, {
       progress: 1, ease: 'none',
       scrollTrigger: {
-        trigger: '.infra__pin', pin: true, start: 'top top', end: () => `+=${innerHeight * 4.2}`, scrub: 0.8,
+        trigger: $('.infra__pin'), pin: true, start: 'top top', end: () => `+=${innerHeight * 3.2}`, scrub: 0.8,
         anticipatePin: 1,
         onUpdate: (self) => { progressBar.style.width = `${self.progress * 100}%`; },
       },
