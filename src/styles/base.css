@@ -227,4 +227,6 @@ html[dir='rtl'] .layer-chip.is-on { transform: translate(50%, 0); }
 .js .reveal { opacity: 0; transform: translateY(28px); }
 .reduced .reveal { opacity: 1 !important; transform: none !important; }
 html[lang='ar'] .layer-chip span { font-family: var(--font-ar); }
+/* on wide screens the side rail already shows the layer; the chip would cover pinned content */
+@media (min-width: 1101px) { .layer-chip { display: none; } }
 @media (max-width: 820px) { .rail { display: none; } }

@@ -7,11 +7,11 @@ The page climbs the OSI layers (L1 Physical → L7 Application) as the visitor s
 |---|---|---|
 | Boot / Hero | — | Terminal boot, avatar scanned in, a cable leaves the `</>` logo |
 | About | L1 | Real photo, counters |
-| Infrastructure | L2–3 | Pinned scene: a 4-floor plant is wired floor by floor |
+| Infrastructure | L2–3 | CSS-3D "blueprint → living plant": floor plan, exploded floors, racks, riser, night lights, hex shield |
 | Journey | L4 | Flight path Homs → Leverkusen, timeline, ZAB stamp |
 | Credentials | L5 | Flip cards + languages |
 | Skills | L6 | Live network topology (skills ↔ projects) |
-| Projects | L7 | LexAI RAG explainer (pinned) + Cobra SaaS sync diagram |
+| Projects | L7 | 15U CSS-3D server rack: each project is a unit that slides out — Cobra SaaS (sync + evolution v0→v2), LexAI (RAG explainer), Mereva Wallet (live app demo) |
 | Contact | ✓ | Cable plugs into RJ45, interactive terminal |
 
 Languages: German (default, `/`), English (`/en/`), Arabic RTL (`/ar/`). Every page is **pre-rendered at build

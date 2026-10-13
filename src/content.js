@@ -6,6 +6,7 @@ export const CONTACT = {
   github: 'https://github.com/nowarmerey',
   linkedin: 'https://www.linkedin.com/in/nawar-meree-036491164',
   lexaiRepo: 'https://github.com/nowarmerey/pdf-rag-agent',
+  merevaRepo: 'https://github.com/nowarmerey/mereva-wallet',
 };
 
 export const SITE = 'https://nawarmeree.com';
@@ -30,7 +31,7 @@ export const STATS = [
 export const LANG_LEVELS = [100, 72, 72];
 
 /** Skills topology: each skill links to the hubs (projects / employers) where it was used. */
-export const SKILL_HUBS = ['sada', 'berger', 'cobra', 'lexai'];
+export const SKILL_HUBS = ['sada', 'berger', 'cobra', 'lexai', 'mereva'];
 /** @type {{ infra: Array<[string, string[]]>, soft: Array<[string, string[]]> }} */
 export const SKILLS = {
   infra: [
@@ -45,19 +46,24 @@ export const SKILLS = {
     ['Microsoft 365', ['berger']],
     ['ZKTeco', ['sada']],
     ['Linux', ['cobra']],
+    ['Docker', ['mereva']],
   ],
   soft: [
     ['VBA', ['sada']],
+    ['Java', ['sada']],
     ['Python', ['lexai']],
     ['FastAPI', ['lexai']],
-    ['PostgreSQL', ['lexai', 'cobra']],
+    ['PostgreSQL', ['lexai', 'cobra', 'mereva']],
+    ['Prisma', ['cobra', 'mereva']],
     ['pgvector · RAG', ['lexai']],
     ['Gemini AI', ['lexai']],
-    ['JWT · Auth', ['lexai', 'cobra']],
+    ['JWT · Auth', ['lexai', 'cobra', 'mereva']],
+    ['Next.js', ['mereva']],
+    ['Stripe', ['mereva']],
     ['TypeScript', ['cobra']],
-    ['React', ['cobra']],
+    ['React', ['cobra', 'mereva']],
     ['Electron', ['cobra']],
-    ['HTML · CSS · JS', ['lexai', 'cobra']],
+    ['HTML · CSS · JS', ['lexai', 'cobra', 'mereva']],
   ],
 };
 
@@ -69,6 +75,15 @@ const shared = {
   },
   cobra: {
     tech: ['TypeScript', 'Electron', 'React', 'Express', 'Prisma', 'PostgreSQL', 'SQLite', 'Vite'],
+    // version history, from the GitHub repositories (commit counts as of Oct 2026)
+    versions: [
+      { v: 'v0', repo: 'cobra-pos', date: '07/2026', commits: '19' },
+      { v: 'v1', repo: 'cobra-oop', date: '08/2026', commits: '82' },
+      { v: 'v2', repo: 'cobra-saas', date: '08/2026 →', commits: '500+' },
+    ],
+  },
+  mereva: {
+    tech: ['Next.js 14', 'React', 'Tailwind', 'PostgreSQL', 'Prisma', 'NextAuth', 'Stripe', 'Docker'],
   },
 };
 
@@ -155,7 +170,7 @@ export const content = {
       title: 'My toolbox, as a network map.',
       hint: 'Hover or tap a node to see where I used it.',
       groups: ['Infrastructure & Security', 'Software & Cloud'],
-      hubs: { sada: 'Sada · Plant IT', berger: 'Berger IT', lexai: 'LexAI', cobra: 'Cobra SaaS' },
+      hubs: { sada: 'Sada · Plant IT', berger: 'Berger IT', lexai: 'LexAI', cobra: 'Cobra SaaS', mereva: 'Mereva Wallet' },
     },
     projects: {
       kicker: 'Layer 7 · Application',
@@ -187,6 +202,27 @@ export const content = {
         ],
         nodes: { commerce: 'Commerce', beauty: 'Beauty', api: 'Cloud API', admin: 'Admin', lan: 'LAN' },
         private: 'Commercial product — source is private',
+        evolutionTitle: 'Evolution',
+        evolution: [
+          'Offline grocery POS in JavaScript + Electron, SQLite',
+          'Object-oriented rewrite in TypeScript, layer by layer, with tests',
+          'Multi-tenant platform: two products, cloud API, admin console',
+        ],
+        commits: 'commits',
+      },
+      mereva: {
+        tag: 'Multi-tenant SaaS expense manager',
+        desc: 'A personal-finance web app built to be sold as a subscription: wallets, budgets with alerts, bills, saving goals and a cash-flow forecast — with accounts, Stripe billing and an admin console.',
+        points: [
+          'Next.js 14 App Router with PostgreSQL + Prisma',
+          'Sign-in with email/password or Google (NextAuth)',
+          'Stripe subscriptions with plans, offers and a 14-day trial',
+          'Three languages (EN / DE / AR) with full RTL',
+          'Backup to file or Google Drive, Docker deployment',
+        ],
+        code: 'View on GitHub',
+        note: 'Live demo runs on an internal server',
+        demo: { balance: 'Balance', budget: 'Budget', forecast: 'Cash-flow forecast', plan: 'Pro plan · active' },
       },
     },
     contact: {
@@ -287,7 +323,7 @@ export const content = {
       title: 'Mein Werkzeugkasten als Netzwerkplan.',
       hint: 'Über einen Knoten fahren oder tippen, um zu sehen, wo ich ihn eingesetzt habe.',
       groups: ['Infrastruktur & Sicherheit', 'Software & Cloud'],
-      hubs: { sada: 'Sada · Werks-IT', berger: 'Berger IT', lexai: 'LexAI', cobra: 'Cobra SaaS' },
+      hubs: { sada: 'Sada · Werks-IT', berger: 'Berger IT', lexai: 'LexAI', cobra: 'Cobra SaaS', mereva: 'Mereva Wallet' },
     },
     projects: {
       kicker: 'Schicht 7 · Anwendung',
@@ -319,6 +355,27 @@ export const content = {
         ],
         nodes: { commerce: 'Commerce', beauty: 'Beauty', api: 'Cloud-API', admin: 'Admin', lan: 'LAN' },
         private: 'Kommerzielles Produkt – Quellcode nicht öffentlich',
+        evolutionTitle: 'Entwicklung',
+        evolution: [
+          'Offline-Kassensystem in JavaScript + Electron, SQLite',
+          'Objektorientierter Neuaufbau in TypeScript, Schicht für Schicht, mit Tests',
+          'Mandantenfähige Plattform: zwei Produkte, Cloud-API, Admin-Konsole',
+        ],
+        commits: 'Commits',
+      },
+      mereva: {
+        tag: 'Mandantenfähiger SaaS-Ausgabenmanager',
+        desc: 'Eine Finanz-Web-App, gebaut für den Verkauf im Abo: Konten, Budgets mit Warnungen, Rechnungen, Sparziele und eine Cashflow-Prognose – mit Benutzerkonten, Stripe-Abrechnung und Admin-Konsole.',
+        points: [
+          'Next.js 14 App Router mit PostgreSQL + Prisma',
+          'Anmeldung per E-Mail/Passwort oder Google (NextAuth)',
+          'Stripe-Abos mit Tarifen, Angeboten und 14-tägiger Testphase',
+          'Drei Sprachen (EN / DE / AR) inklusive RTL',
+          'Backup als Datei oder in Google Drive, Docker-Deployment',
+        ],
+        code: 'Auf GitHub ansehen',
+        note: 'Die Live-Demo läuft auf einem internen Server',
+        demo: { balance: 'Kontostand', budget: 'Budget', forecast: 'Cashflow-Prognose', plan: 'Pro-Tarif · aktiv' },
       },
     },
     contact: {
@@ -419,7 +476,7 @@ export const content = {
       title: 'أدواتي، على شكل خريطة شبكة.',
       hint: 'مرّر أو اضغط على أي عقدة لترى أين استخدمتها.',
       groups: ['البنية التحتية والأمان', 'البرمجيات والسحابة'],
-      hubs: { sada: 'Sada · تقنية المصنع', berger: 'Berger IT', lexai: 'LexAI', cobra: 'Cobra SaaS' },
+      hubs: { sada: 'Sada · تقنية المصنع', berger: 'Berger IT', lexai: 'LexAI', cobra: 'Cobra SaaS', mereva: 'Mereva Wallet' },
     },
     projects: {
       kicker: 'الطبقة 7 · التطبيقات',
@@ -451,6 +508,27 @@ export const content = {
         ],
         nodes: { commerce: 'Commerce', beauty: 'Beauty', api: 'Cloud API', admin: 'Admin', lan: 'LAN' },
         private: 'منتج تجاري — الكود المصدري غير منشور',
+        evolutionTitle: 'مراحل التطور',
+        evolution: [
+          'نقطة بيع لبقالية تعمل دون إنترنت بـJavaScript وElectron وSQLite',
+          'إعادة بناء كائنية التوجه بـTypeScript طبقة طبقة مع اختبارات',
+          'منصّة متعددة المستأجرين: منتجان وAPI سحابي ولوحة إدارة',
+        ],
+        commits: 'commit',
+      },
+      mereva: {
+        tag: 'مدير مصاريف SaaS متعدد المستأجرين',
+        desc: 'تطبيق ويب للمالية الشخصية مبني ليُباع كاشتراك: محافظ، وميزانيات مع تنبيهات، وفواتير، وأهداف ادخار، وتوقّع للتدفق النقدي — مع حسابات مستخدمين، ودفع عبر Stripe، ولوحة إدارة.',
+        points: [
+          'Next.js 14 App Router مع PostgreSQL وPrisma',
+          'تسجيل دخول بالبريد وكلمة المرور أو Google (NextAuth)',
+          'اشتراكات Stripe بخطط وعروض وتجربة مجانية 14 يوماً',
+          'ثلاث لغات (EN / DE / AR) مع دعم كامل لـRTL',
+          'نسخ احتياطي إلى ملف أو Google Drive، ونشر عبر Docker',
+        ],
+        code: 'شاهده على GitHub',
+        note: 'النسخة الحية تعمل على خادم داخلي',
+        demo: { balance: 'الرصيد', budget: 'الميزانية', forecast: 'توقّع التدفق النقدي', plan: 'خطة Pro · فعّالة' },
       },
     },
     contact: {

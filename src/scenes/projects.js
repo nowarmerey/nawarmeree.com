@@ -1,9 +1,11 @@
-// Chapter 7: LexAI explains RAG visually (pinned on desktop, looping on mobile); Cobra SaaS shows live sync.
+// Chapter 7: the production rack — Cobra SaaS (live sync + evolution), LexAI (RAG explainer), Mereva Wallet (app demo).
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { t, applyTexts } from '../i18n.js';
 import { scope } from '../lib/scene.js';
 import { svgEl, placeOnPath } from '../lib/svg.js';
+import { buildRack } from './rack.js';
+import { initMerevaDemo } from './mereva.js';
 
 
 // vector-space coordinates (viewBox 400×260)
@@ -154,42 +156,134 @@ function buildArch($) {
   return { svg, wires, nodes };
 }
 
+const ORDER = ['cobra', 'lexai', 'mereva'];
+
 /**
+ * Chapter 7 — the production rack. Desktop: pinned; the rack boots, then each project's unit slides out
+ * while its panel (text + live demo) is shown. Phones and reduced motion: a plain stacked list.
  * @param {HTMLElement} root  #projects
  * @param {{ reduced: boolean, mm: gsap.MatchMedia }} opts
  */
 export function initProjects(root, { reduced, mm }) {
   const dom = scope(root);
-  const { $ } = dom;
+  const { $, $$ } = dom;
+  const prj = $('#prj');
+  const panels = $$('.project');
+
   const parts = buildRag($);
-  const { tl, renderTyped } = ragTimeline(parts, dom);
-  tl.pause();
+  const { tl: ragTl, renderTyped } = ragTimeline(parts, dom);
+  ragTl.pause();
   renderTyped();
 
   const arch = buildArch($);
   applyTexts(arch.svg);
+  // the rack is only shown on desktop: build it lazily there (≈200 fewer DOM nodes on phones)
+  let rack = null;
+  const getRack = () => (rack ??= buildRack($('#rack')));
+  const mereva = initMerevaDemo($('#merevaDemo'));
+
+  // ── which project is "on stage"; demos only run when their panel is shown AND the section is on screen ──
+  let active = -1;
+  let onScreen = false;
+  let staticLayout = false;
+  const archLoops = buildArchLoops(arch);
+  const syncDemos = () => {
+    const show = (i) => onScreen && (staticLayout || active === i);
+    archLoops.forEach((tw) => (show(0) ? tw.play() : tw.pause()));
+    if (show(2)) mereva.play(); else mereva.pause();
+  };
+  const setActive = (i) => {
+    if (i === active) return;
+    active = i;
+    panels.forEach((p, k) => {
+      const on = staticLayout || k === i;
+      p.classList.toggle('is-active', on);
+      // links of hidden panels must not be reachable with Tab
+      p.querySelectorAll('a').forEach((a) => (on ? a.removeAttribute('tabindex') : a.setAttribute('tabindex', '-1')));
+    });
+    syncDemos();
+  };
+  ScrollTrigger.create({
+    trigger: root, start: 'top bottom', end: 'bottom top',
+    refreshPriority: -1, // measure after the pin below has added its spacing
+    onToggle: (self) => {
+      onScreen = self.isActive;
+      $('#rack').classList.toggle('is-visible', onScreen);
+      syncDemos();
+    },
+  });
+
+  const useStatic = () => {
+    staticLayout = true;
+    prj.classList.add('is-static');
+    active = -2; // force a refresh
+    setActive(-1);
+  };
 
   if (reduced) {
-    tl.progress(1);
+    useStatic();
+    ragTl.progress(1);
+    mereva.settle();
     return { renderTyped };
   }
 
   mm.add('(min-width: 901px)', () => {
-    gsap.to(tl, {
+    staticLayout = false;
+    prj.classList.remove('is-static');
+    const rack = getRack();
+    gsap.set(rack.body, { rotationY: -52, rotationX: 6, x: -60 });
+
+    const master = gsap.timeline({ paused: true });
+    master
+      .to(rack.body, { rotationY: -24, x: 0, duration: 1, ease: 'power2.out' }, 0)
+      .to({}, { duration: 0.01, onStart: () => rack.boot(true), onReverseComplete: () => rack.boot(false) }, 0.5)
+      .addLabel('cobra', 1.1)
+      .to({}, { duration: 1.6 })
+      .addLabel('lexai')
+      .add(ragTl.tweenFromTo(0, ragTl.duration(), { duration: 2.4, ease: 'none' }), 'lexai+=0.2')
+      .addLabel('mereva', '+=0.2')
+      .to({}, { duration: 1.6 });
+
+    const at = (label) => master.labels[label];
+    master.eventCallback('onUpdate', () => {
+      const t = master.time();
+      const i = t >= at('mereva') ? 2 : t >= at('lexai') ? 1 : 0;
+      setActive(i);
+      rack.setActive(t >= at('cobra') ? ORDER[i] : null);
+    });
+    setActive(0);
+
+    const bar = $('#prjProgress');
+    const tween = gsap.to(master, {
       progress: 1, ease: 'none',
-      scrollTrigger: { trigger: $('.lexai__pin'), pin: true, start: 'top top', end: () => `+=${innerHeight * 1.8}`, scrub: 0.8, anticipatePin: 1 },
+      scrollTrigger: {
+        trigger: $('.prj__pin'), pin: true, start: 'top top', end: () => `+=${innerHeight * 4}`, scrub: 0.6,
+        anticipatePin: 1,
+        onUpdate: (self) => { bar.style.width = `${self.progress * 100}%`; },
+      },
     });
-  });
-  mm.add('(max-width: 900px)', () => {
-    const st = ScrollTrigger.create({
-      trigger: $('#rag'), start: 'top 70%', once: true,
-      onEnter: () => { tl.restart(); tl.repeat(-1).repeatDelay(2.5); },
-    });
-    return () => { st.kill(); tl.repeat(0); tl.pause(0); };
+    return () => { tween.scrollTrigger?.kill(); tween.kill(); master.kill(); };
   });
 
-  // Cobra architecture: draw-in, then endless bidirectional sync packets — running only while on screen
+  mm.add('(max-width: 900px)', () => {
+    useStatic();
+    const st = ScrollTrigger.create({
+      trigger: $('#rag'), start: 'top 70%', once: true,
+      onEnter: () => { ragTl.restart(); ragTl.repeat(-1).repeatDelay(2.5); },
+    });
+    return () => { st.kill(); ragTl.repeat(0); ragTl.pause(0); staticLayout = false; prj.classList.remove('is-static'); };
+  });
+
+  return { renderTyped };
+}
+
+/** Cobra architecture: draw-in, then endless bidirectional sync packets (paused until shown). */
+function buildArchLoops(arch) {
   gsap.set(arch.nodes, { opacity: 0, y: 14 });
+  ScrollTrigger.create({
+    trigger: arch.svg, start: 'top 85%', once: true,
+    onEnter: () => gsap.to(arch.nodes, { opacity: 1, y: 0, duration: 0.6, stagger: 0.12, ease: 'back.out(1.8)' }),
+  });
   /** @type {gsap.core.Tween[]} */
   const loops = [];
   arch.wires.forEach((w, i) => {
@@ -209,13 +303,5 @@ export function initProjects(root, { reduced, mm }) {
     };
     loops.push(travel(up, 0, 1 + i * 0.2, 0.6 + i * 0.3), travel(down, 1, 1.8 + i * 0.25, 0.9 + i * 0.2));
   });
-  ScrollTrigger.create({
-    trigger: arch.svg, start: 'top 80%', once: true,
-    onEnter: () => gsap.to(arch.nodes, { opacity: 1, y: 0, duration: 0.6, stagger: 0.12, ease: 'back.out(1.8)' }),
-  });
-  ScrollTrigger.create({
-    trigger: arch.svg, start: 'top 80%', end: 'bottom top',
-    onToggle: (self) => loops.forEach((tw) => (self.isActive ? tw.play() : tw.pause())),
-  });
-  return { renderTyped };
+  return loops;
 }

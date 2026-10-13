@@ -27,6 +27,7 @@
   <link rel="stylesheet" href="/src/styles/base.css" />
   <link rel="stylesheet" href="/src/styles/sections.css" />
   <link rel="stylesheet" href="/src/styles/blueprint.css" />
+  <link rel="stylesheet" href="/src/styles/projects.css" />
   <script type="application/ld+json">%%JSONLD%%</script>
 </head>
 <body>
@@ -195,7 +196,7 @@
       </div>
     </section>
 
-    <!-- ═════ L7 · PROJECTS ═════ -->
+    <!-- ═════ L7 · PROJECTS: a production rack — every project is a server unit ═════ -->
     <section class="projects section" id="projects" data-layer="6">
       <div class="cloud-bg" aria-hidden="true"></div>
       <div class="container">
@@ -203,49 +204,99 @@
         <h2 class="title reveal" data-i18n="projects.title"></h2>
       </div>
 
-      <!-- LexAI: pinned RAG explainer -->
-      <article class="project project--lexai" id="lexai">
-        <div class="lexai__pin">
-          <a class="skip-scene mono" href="#cobra" data-i18n="skipScene"></a>
-          <div class="container project__grid">
-            <div class="project__info">
-              <h3 class="project__name">LexAI</h3>
-              <p class="project__tag mono" data-i18n="projects.lexai.tag"></p>
-              <p class="project__desc" data-i18n="projects.lexai.desc"></p>
-              <ul class="project__points" id="lexaiPoints"></ul>
-              <ul class="chips" id="lexaiTech"></ul>
-              <a class="btn btn--ghost magnetic" id="lexaiLink" href="%%LEXAI%%" target="_blank" rel="noopener noreferrer" data-i18n="projects.lexai.code"></a>
-            </div>
-            <div class="rag tilt" id="rag">
-              <ol class="rag__steps mono" id="ragSteps"></ol>
-              <div class="rag__stage">
-                <div class="rag__doc" id="ragDoc"><span class="rag__doc-ext mono">PDF</span><i></i><i></i><i></i><i></i><i></i><i></i></div>
-                <div class="rag__chunks" id="ragChunks"></div>
-                <svg class="rag__space" id="ragSpace" viewBox="0 0 400 260" aria-hidden="true"></svg>
-                <div class="rag__query mono" id="ragQuery"><span class="prompt">?</span> <span id="ragQueryText"></span></div>
-                <div class="rag__answer" id="ragAnswer"><span class="mono">Gemini ›</span> <span id="ragAnswerText"></span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
+      <div class="prj" id="prj">
+        <div class="prj__pin">
+          <a class="skip-scene mono" href="#contact" data-i18n="skipScene"></a>
+          <div class="container prj__grid">
+            <div class="rack" id="rack" aria-hidden="true"></div>
 
-      <!-- Cobra SaaS -->
-      <article class="project project--cobra" id="cobra">
-        <div class="container project__grid project__grid--flip">
-          <div class="project__info reveal">
-            <h3 class="project__name">Cobra SaaS</h3>
-            <p class="project__tag mono" data-i18n="projects.cobra.tag"></p>
-            <p class="project__desc" data-i18n="projects.cobra.desc"></p>
-            <ul class="project__points" id="cobraPoints"></ul>
-            <ul class="chips" id="cobraTech"></ul>
-            <p class="private mono"><span class="lock">●</span> <span data-i18n="projects.cobra.private"></span></p>
+            <div class="prj__panels">
+              <!-- Cobra SaaS -->
+              <article class="project" id="cobra" data-unit="cobra">
+                <div class="project__info">
+                  <p class="project__index mono">01 / 03 · 4U</p>
+                  <h3 class="project__name">Cobra SaaS</h3>
+                  <p class="project__tag mono" data-i18n="projects.cobra.tag"></p>
+                  <p class="project__desc" data-i18n="projects.cobra.desc"></p>
+                  <ul class="project__points" id="cobraPoints"></ul>
+                  <ul class="chips" id="cobraTech"></ul>
+                  <p class="private mono"><span class="lock" aria-hidden="true">●</span> <span data-i18n="projects.cobra.private"></span></p>
+                </div>
+                <div class="project__demo">
+                  <div class="arch tilt">
+                    <svg id="arch" viewBox="0 0 440 380" aria-hidden="true"></svg>
+                  </div>
+                  <div class="evo">
+                    <p class="evo__title mono" data-i18n="projects.cobra.evolutionTitle"></p>
+                    <ol class="evo__list" id="cobraEvolution"></ol>
+                  </div>
+                </div>
+              </article>
+
+              <!-- LexAI -->
+              <article class="project" id="lexai" data-unit="lexai">
+                <div class="project__info">
+                  <p class="project__index mono">02 / 03 · 2U</p>
+                  <h3 class="project__name">LexAI</h3>
+                  <p class="project__tag mono" data-i18n="projects.lexai.tag"></p>
+                  <p class="project__desc" data-i18n="projects.lexai.desc"></p>
+                  <ul class="project__points" id="lexaiPoints"></ul>
+                  <ul class="chips" id="lexaiTech"></ul>
+                  <a class="btn btn--ghost magnetic" id="lexaiLink" href="%%LEXAI%%" target="_blank" rel="noopener noreferrer" data-i18n="projects.lexai.code"></a>
+                </div>
+                <div class="project__demo">
+                  <div class="rag tilt" id="rag">
+                    <ol class="rag__steps mono" id="ragSteps"></ol>
+                    <div class="rag__stage">
+                      <div class="rag__doc" id="ragDoc"><span class="rag__doc-ext mono">PDF</span><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                      <div class="rag__chunks" id="ragChunks"></div>
+                      <svg class="rag__space" id="ragSpace" viewBox="0 0 400 260" aria-hidden="true"></svg>
+                      <div class="rag__query mono" id="ragQuery"><span class="prompt">?</span> <span id="ragQueryText"></span></div>
+                      <div class="rag__answer" id="ragAnswer"><span class="mono">Gemini ›</span> <span id="ragAnswerText"></span></div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <!-- Mereva Wallet -->
+              <article class="project" id="mereva" data-unit="mereva">
+                <div class="project__info">
+                  <p class="project__index mono">03 / 03 · 2U</p>
+                  <h3 class="project__name">Mereva Wallet</h3>
+                  <p class="project__tag mono" data-i18n="projects.mereva.tag"></p>
+                  <p class="project__desc" data-i18n="projects.mereva.desc"></p>
+                  <ul class="project__points" id="merevaPoints"></ul>
+                  <ul class="chips" id="merevaTech"></ul>
+                  <a class="btn btn--ghost magnetic" href="%%MEREVA%%" target="_blank" rel="noopener noreferrer" data-i18n="projects.mereva.code"></a>
+                  <p class="private mono"><span class="lock" aria-hidden="true">●</span> <span data-i18n="projects.mereva.note"></span></p>
+                </div>
+                <div class="project__demo">
+                  <div class="mw tilt" id="merevaDemo" aria-hidden="true">
+                    <div class="mw__bar"><i></i><i></i><i></i><span class="mono">mereva-wallet</span><span class="mw__lang mono" id="mwLang">EN</span></div>
+                    <div class="mw__body" id="mwBody">
+                      <div class="mw__kpis">
+                        <div class="mw__kpi"><small data-mw="balance"></small><b class="mono" id="mwBalance">€0</b></div>
+                        <div class="mw__kpi"><small data-mw="budget"></small><div class="mw__meter"><i id="mwBudget"></i></div><b class="mono" id="mwBudgetPct">0%</b></div>
+                      </div>
+                      <div class="mw__chart">
+                        <small data-mw="forecast"></small>
+                        <svg viewBox="0 0 300 110" preserveAspectRatio="none">
+                          <path class="mw__grid" d="M0 27H300M0 55H300M0 83H300" />
+                          <path class="mw__area" id="mwArea" d="M0 92 L30 84 L60 88 L90 70 L120 74 L150 58 L180 62 L180 110 L0 110 Z" />
+                          <path class="mw__line" id="mwLine" d="M0 92 L30 84 L60 88 L90 70 L120 74 L150 58 L180 62" />
+                          <path class="mw__line mw__line--forecast" id="mwForecast" d="M180 62 L210 50 L240 46 L270 34 L300 28" />
+                        </svg>
+                      </div>
+                      <div class="mw__plan"><span class="mw__stripe mono">stripe</span><span data-mw="plan"></span><span class="mw__check" id="mwCheck">✓</span></div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
           </div>
-          <div class="arch tilt reveal">
-            <svg id="arch" viewBox="0 0 440 380" aria-hidden="true"></svg>
-          </div>
+          <div class="prj__progress"><span id="prjProgress"></span></div>
         </div>
-      </article>
+      </div>
     </section>
 
     <!-- ═════ CONTACT ═════ -->

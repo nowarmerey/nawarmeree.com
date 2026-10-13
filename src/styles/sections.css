@@ -131,7 +131,6 @@ html[lang='ar'] .hud span { font-family: var(--font-ar); }
 }
 html[lang='ar'] .skip-scene { font-family: var(--font-ar); }
 .skip-scene:hover, .skip-scene:focus-visible { color: var(--accent); border-color: var(--accent); }
-.lexai__pin { position: relative; }
 @media (max-width: 900px) { .skip-scene { display: none; } }
 .infra__progress { position: absolute; inset: auto var(--gutter) 18px; height: 2px; background: var(--line); border-radius: 2px; }
 .infra__progress span { display: block; height: 100%; width: 0; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
@@ -254,23 +253,18 @@ html[lang='ar'] .topo__legend { font-family: var(--font-ar); }
     radial-gradient(60% 40% at 80% 10%, rgba(169, 139, 255, 0.16), transparent 70%),
     radial-gradient(50% 40% at 10% 60%, rgba(76, 201, 255, 0.1), transparent 70%);
 }
-.project { position: relative; }
-.lexai__pin { min-height: 100svh; display: flex; align-items: center; padding-block: calc(var(--header-h) + 16px) 32px; }
-.project--cobra { padding-block: clamp(64px, 10vh, 120px) 0; }
-.project__grid { display: grid; grid-template-columns: 0.95fr 1.05fr; gap: clamp(28px, 5vw, 72px); align-items: center; }
-.project__grid--flip .project__info { order: 2; }
-.project__name { font-size: clamp(2.2rem, 5vw, 4rem); line-height: 1; letter-spacing: -0.04em; direction: ltr; unicode-bidi: isolate; }
+.project__name { font-size: clamp(2rem, 3.4vw, 3rem); line-height: 1; letter-spacing: -0.04em; direction: ltr; unicode-bidi: isolate; }
 html[dir='rtl'] .project__name { text-align: right; }
 .project__tag { color: var(--accent); font-size: 0.82rem; margin-top: 12px; }
 html[lang='ar'] .project__tag { font-family: var(--font-ar); font-size: 0.95rem; }
-.project__desc { color: #c3cad6; margin-top: 18px; }
-.project__points { margin-top: 18px; display: grid; gap: 8px; }
-.project__points li { position: relative; padding-inline-start: 22px; color: #b8c0cc; font-size: 0.93rem; }
+.project__desc { color: #c3cad6; margin-top: 14px; font-size: 0.95rem; }
+.project__points { margin-top: 14px; display: grid; gap: 5px; }
+.project__points li { position: relative; padding-inline-start: 22px; color: #b8c0cc; font-size: 0.86rem; }
 .project__points li::before { content: '›'; position: absolute; inset-inline-start: 0; color: var(--accent); font-family: var(--font-mono); }
 html[dir='rtl'] .project__points li::before { content: '‹'; }
-.project .chips { margin-top: 20px; }
-.project .btn { margin-top: 24px; }
-.private { margin-top: 20px; font-size: 0.8rem; color: var(--muted); }
+.project .chips { margin-top: 16px; }
+.project .btn { margin-top: 18px; }
+.private { margin-top: 14px; font-size: 0.78rem; color: var(--muted); }
 html[lang='ar'] .private { font-family: var(--font-ar); }
 .lock { color: var(--amber); }
 
@@ -283,7 +277,7 @@ html[lang='ar'] .rag__steps { font-family: var(--font-ar); }
 .rag__steps li { padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--dim); transition: all 0.3s; }
 .rag__steps li.is-active { border-color: var(--accent); color: var(--accent); background: rgba(var(--accent-rgb), 0.08); }
 .rag__steps li.is-done { color: var(--muted); }
-.rag__stage { position: relative; height: clamp(300px, 46vh, 400px); margin-top: 14px; border-radius: var(--radius); background: rgba(0, 0, 0, 0.3); overflow: hidden; direction: ltr; }
+.rag__stage { position: relative; height: clamp(280px, 42vh, 380px); margin-top: 14px; border-radius: var(--radius); background: rgba(0, 0, 0, 0.3); overflow: hidden; direction: ltr; }
 .rag__doc {
   position: absolute; left: 50%; top: 50%; width: 120px; height: 156px; margin: -78px 0 0 -60px; border-radius: 8px;
   background: #e9eef4; padding: 34px 14px 0; display: flex; flex-direction: column; gap: 9px;
@@ -324,12 +318,7 @@ html[lang='ar'] .rag__query, html[lang='ar'] .rag__answer { font-family: var(--f
 #arch .db { fill: #120f1d; stroke: var(--violet); }
 #arch .tenant { fill: none; stroke: var(--violet); stroke-dasharray: 2 4; opacity: 0.6; }
 
-@media (max-width: 900px) {
-  .project__grid { grid-template-columns: 1fr; }
-  .project__grid--flip .project__info { order: 0; }
-  .lexai__pin { min-height: 0; display: block; padding-block: 24px; }
-  .rag__stage { height: 300px; }
-}
+@media (max-width: 900px) { .rag__stage { height: 300px; } }
 
 /* ═════════ CONTACT ═════════ */
 .contact { padding-bottom: 32px; }

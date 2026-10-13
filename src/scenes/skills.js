@@ -6,7 +6,7 @@ import { SKILLS, SKILL_HUBS } from '../content.js';
 import { scope } from '../lib/scene.js';
 import { svgEl } from '../lib/svg.js';
 
-const HUB_Y = { sada: 14, berger: 38, cobra: 62, lexai: 86 };
+const HUB_Y = { sada: 10, berger: 30, cobra: 50, lexai: 70, mereva: 90 };
 
 /**
  * @param {HTMLElement} root  #skills

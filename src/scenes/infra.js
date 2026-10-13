@@ -273,6 +273,7 @@ export function initInfra(root, { reduced, mm }) {
   // CSS loops (LEDs, ripples, packets) only run while the scene is on screen
   ScrollTrigger.create({
     trigger: root, start: 'top bottom', end: 'bottom top',
+    refreshPriority: -1, // measure after the pin below has added its spacing
     onToggle: (self) => bp.classList.toggle('is-visible', self.isActive),
   });
 

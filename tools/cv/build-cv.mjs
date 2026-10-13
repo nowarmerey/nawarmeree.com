@@ -22,7 +22,7 @@ const CV = {
     profile: 'Systemadministrator mit über 4 Jahren Erfahrung im Aufbau, Betrieb und der Absicherung von IT-Infrastrukturen in einem Industrieunternehmen mit 1.200 Mitarbeitenden. Starke Kenntnisse in Windows Server, Netzwerken (MikroTik, Huawei), FortiGate-Firewall sowie Backup- und Recovery-Lösungen. Entwickelt heute zusätzlich mandantenfähige SaaS-Plattformen und KI-Anwendungen. Strukturierte Arbeitsweise, schnelle Auffassungsgabe, hohe Serviceorientierung.',
     exp: [
       {
-        t: 'Cobra SaaS – Mandantenfähige SaaS-Plattform', w: 'Eigenes Produkt', d: '',
+        t: 'Cobra SaaS – Mandantenfähige SaaS-Plattform', w: 'Eigenes Produkt · entstanden aus cobra-pos (v0) und cobra-oop (v1)', d: 'seit 07/2026',
         p: [
           'Zwei Produkte auf gemeinsamem Kernel: Cobra Commerce (ERP + Kasse) und Cobra Beauty (CRM)',
           'Offline-first Electron-Apps mit bidirektionaler Cloud-Synchronisation',
@@ -37,6 +37,15 @@ const CV = {
           'Multi-Format-Verarbeitung (PDF, Word, Bilder) mit der Gemini Vision API',
           'Multi-Tenant-System mit JWT-Authentifizierung, zweisprachige UI (DE/EN), Deployment auf Railway',
           'Python · FastAPI · PostgreSQL · Google Gemini',
+        ],
+      },
+      {
+        t: 'Mereva Wallet – SaaS-Ausgabenmanager', w: 'Projekt · github.com/nowarmerey/mereva-wallet', d: '2026',
+        p: [
+          'Finanz-Web-App für den Verkauf im Abo: Konten, Budgets, Rechnungen, Sparziele, Cashflow-Prognose',
+          'Stripe-Abos mit Tarifen und Testphase, Anmeldung per E-Mail oder Google (NextAuth), Admin-Konsole',
+          'Drei Sprachen (EN/DE/AR, inkl. RTL), Backup in Google Drive, Docker-Deployment',
+          'Next.js 14 · React · PostgreSQL · Prisma · Tailwind',
         ],
       },
       {
@@ -70,7 +79,7 @@ const CV = {
       ['Netzwerke & Sicherheit', 'LAN/WAN, MikroTik, Huawei, FortiGate, Active Directory, Group Policy'],
       ['Server & Infrastruktur', 'File Server, Backup & Recovery, Systemmigration, Zabbix'],
       ['IT-Support', 'Helpdesk, Remote-Support, Microsoft 365, Drucker & IP-Telefonie'],
-      ['Entwicklung', 'TypeScript, JavaScript, React, Electron, Python, FastAPI, PostgreSQL, VBA'],
+      ['Entwicklung', 'TypeScript, JavaScript, React, Next.js, Electron, Python, FastAPI, PostgreSQL, VBA, Java (Grundkenntnisse)'],
     ],
     langs: 'Arabisch (Muttersprache) · Deutsch (B2) · Englisch (B2)',
   },
@@ -83,7 +92,7 @@ const CV = {
     profile: 'System administrator with 4+ years of experience building, running and securing the IT infrastructure of an industrial company with 1,200 employees. Strong skills in Windows Server, networking (MikroTik, Huawei), FortiGate firewalls and backup & recovery. Today also builds multi-tenant SaaS platforms and AI applications. Structured, fast learner, service-minded.',
     exp: [
       {
-        t: 'Cobra SaaS – multi-tenant SaaS platform', w: 'Own product', d: '',
+        t: 'Cobra SaaS – multi-tenant SaaS platform', w: 'Own product · grew out of cobra-pos (v0) and cobra-oop (v1)', d: 'since 07/2026',
         p: [
           'Two products on a shared kernel: Cobra Commerce (ERP + point of sale) and Cobra Beauty (CRM)',
           'Offline-first Electron apps with bidirectional cloud sync',
@@ -98,6 +107,15 @@ const CV = {
           'Multi-format processing (PDF, Word, images) with the Gemini Vision API',
           'Multi-tenant system with JWT authentication, bilingual UI (DE/EN), deployed on Railway',
           'Python · FastAPI · PostgreSQL · Google Gemini',
+        ],
+      },
+      {
+        t: 'Mereva Wallet – SaaS expense manager', w: 'Project · github.com/nowarmerey/mereva-wallet', d: '2026',
+        p: [
+          'Personal-finance web app built to be sold as a subscription: wallets, budgets, bills, saving goals, cash-flow forecast',
+          'Stripe subscriptions with plans and a trial, sign-in via email or Google (NextAuth), admin console',
+          'Three languages (EN/DE/AR incl. RTL), Google Drive backup, Docker deployment',
+          'Next.js 14 · React · PostgreSQL · Prisma · Tailwind',
         ],
       },
       {
@@ -131,7 +149,7 @@ const CV = {
       ['Networking & security', 'LAN/WAN, MikroTik, Huawei, FortiGate, Active Directory, Group Policy'],
       ['Servers & infrastructure', 'File servers, backup & recovery, system migration, Zabbix'],
       ['IT support', 'Helpdesk, remote support, Microsoft 365, printers & IP telephony'],
-      ['Development', 'TypeScript, JavaScript, React, Electron, Python, FastAPI, PostgreSQL, VBA'],
+      ['Development', 'TypeScript, JavaScript, React, Next.js, Electron, Python, FastAPI, PostgreSQL, VBA, Java (basics)'],
     ],
     langs: 'Arabic (native) · German (B2) · English (B2)',
   },

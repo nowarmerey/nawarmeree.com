@@ -55,6 +55,12 @@ function lists(lang) {
     cobraPoints: c.projects.cobra.points.map((_, i) => `<li ${k(`projects.cobra.points.${i}`)}></li>`).join(''),
     lexaiTech: c.lexai.tech.map((x) => `<li>${escapeHtml(x)}</li>`).join(''),
     cobraTech: c.cobra.tech.map((x) => `<li>${escapeHtml(x)}</li>`).join(''),
+    merevaPoints: c.projects.mereva.points.map((_, i) => `<li ${k(`projects.mereva.points.${i}`)}></li>`).join(''),
+    merevaTech: c.mereva.tech.map((x) => `<li>${escapeHtml(x)}</li>`).join(''),
+    cobraEvolution: c.cobra.versions.map((v, i) => `
+      <li><span class="evo__v mono">${escapeHtml(v.v)}</span>
+        <div><b class="mono">${escapeHtml(v.repo)}</b> <small class="mono">${escapeHtml(v.date)} · ${escapeHtml(v.commits)} <span ${k('projects.cobra.commits')}></span></small>
+        <p ${k(`projects.cobra.evolution.${i}`)}></p></div></li>`).join(''),
     langSwitch: LANGS.map((l) =>
       `<a href="${LANG_PATHS[l]}" hreflang="${l}" lang="${l}" aria-label="${escapeHtml(c.langNames[l])}"${l === lang ? ' aria-current="true"' : ''} data-lang-btn="${l}">${l === 'ar' ? 'ع' : l.toUpperCase()}</a>`).join(''),
   };
@@ -97,6 +103,7 @@ function tokens(lang) {
     GITHUB: CONTACT.github,
     LINKEDIN: CONTACT.linkedin,
     LEXAI: CONTACT.lexaiRepo,
+    MEREVA: CONTACT.merevaRepo,
     CV: CV_FILES[lang],
     LANG_DE: LANG_PATHS.de,
   };
