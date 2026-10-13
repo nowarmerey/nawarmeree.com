@@ -159,10 +159,13 @@ export async function initHero(root, { reduced }) {
     .call(() => roleTyper(role), null, 1.2);
 
   // Leaving the hero: avatar floats up and fades, the cable stays attached
-  gsap.timeline({ scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: 0.6 } })
-    .to(q('.hero__text'), { y: -120, opacity: 0, ease: 'none' }, 0)
-    .to(q('.avatar'), { y: -60, scale: 0.92, ease: 'none' }, 0)
-    .to(q('.scroll-hint'), { opacity: 0, ease: 'none' }, 0);
+  // (desktop only: on phones a scroll-scrubbed fade feels laggy under the finger)
+  gsap.matchMedia().add('(min-width: 901px)', () => {
+    gsap.timeline({ scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: 0.6 } })
+      .to(q('.hero__text'), { y: -120, opacity: 0, ease: 'none' }, 0)
+      .to(q('.avatar'), { y: -60, scale: 0.92, ease: 'none' }, 0)
+      .to(q('.scroll-hint'), { opacity: 0, ease: 'none' }, 0);
+  });
 
   // subtle parallax on the dot grid
   if (matchMedia('(hover: hover)').matches) {

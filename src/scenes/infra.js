@@ -260,15 +260,21 @@ export function initInfra(root, { reduced, mm }) {
       .to(counters, { time: 40, duration: 0.8, ease: 'power2.inOut', onUpdate: renderHud }, 0.3),
   ];
 
-  const tl = gsap.timeline({ defaults: { ease: 'power2.out' }, paused: true });
-  STEP_SCENES.forEach((build, i) => {
-    const label = `step${i + 1}`;
-    tl.addLabel(label, i === 0 ? 0 : '+=0.1');
-    if (i > 0) tl.to(steps[i - 1], { autoAlpha: 0, y: -24, duration: 0.3 }, `${label}-=0.05`);
-    tl.to(steps[i], { autoAlpha: 1, y: 0, duration: 0.35 }, label)
-      .add(build(), `${label}+=0.1`);
-  });
-  tl.to({}, { duration: 0.5 }); // hold the final state before the pin releases
+  /** Master timeline. On desktop the step cards swap inside it; on phones they are a static list instead. */
+  const buildTimeline = (withCards) => {
+    const tl = gsap.timeline({ defaults: { ease: 'power2.out' }, paused: true });
+    STEP_SCENES.forEach((build, i) => {
+      const label = `step${i + 1}`;
+      tl.addLabel(label, i === 0 ? 0 : '+=0.1');
+      if (withCards) {
+        if (i > 0) tl.to(steps[i - 1], { autoAlpha: 0, y: -24, duration: 0.3 }, `${label}-=0.05`);
+        tl.to(steps[i], { autoAlpha: 1, y: 0, duration: 0.35 }, label);
+      }
+      tl.add(build(), `${label}+=0.1`);
+    });
+    tl.to({}, { duration: 0.5 }); // hold the final state
+    return tl;
+  };
 
   // CSS loops (LEDs, ripples, packets) only run while the scene is on screen
   ScrollTrigger.create({
@@ -277,16 +283,20 @@ export function initInfra(root, { reduced, mm }) {
     onToggle: (self) => bp.classList.toggle('is-visible', self.isActive),
   });
 
+  const list = $('.infra__steps');
+  const progressBar = $('#infraProgress');
+
   if (reduced) {
-    tl.progress(1);
+    buildTimeline(false).progress(1);
     bp.classList.add('is-racks', 'is-live');
     gsap.set(steps, { autoAlpha: 1, y: 0 });
-    $('.infra__steps').classList.add('is-static');
+    list.classList.add('is-static');
     return;
   }
 
-  const progressBar = $('#infraProgress');
-  mm.add('all', () => {
+  // Desktop: pinned, the scroll position drives the story.
+  mm.add('(min-width: 901px)', () => {
+    const tl = buildTimeline(true);
     gsap.to(tl, {
       progress: 1, ease: 'none',
       scrollTrigger: {
@@ -295,5 +305,31 @@ export function initInfra(root, { reduced, mm }) {
         onUpdate: (self) => { progressBar.style.width = `${self.progress * 100}%`; },
       },
     });
+  });
+
+  // Phones: no pin, no scrubbing (a finger-driven scrub looks laggy). The scene plays by itself while it is
+  // on screen and loops; the six steps are a list below it and the current one is highlighted.
+  mm.add('(max-width: 900px)', () => {
+    const tl = buildTimeline(false);
+    list.classList.add('is-static', 'is-auto');
+    gsap.set(steps, { clearProps: 'opacity,visibility,transform' }); // the CSS of .is-auto takes over
+    const starts = STEP_SCENES.map((_, i) => tl.labels[`step${i + 1}`]);
+    tl.eventCallback('onUpdate', () => {
+      const current = starts.filter((at) => tl.time() >= at).length - 1;
+      steps.forEach((li, k) => li.classList.toggle('is-current', k === current));
+      progressBar.style.width = `${tl.progress() * 100}%`;
+    });
+    tl.repeat(-1).repeatDelay(2.5).eventCallback('onRepeat', () => bp.classList.remove('is-racks', 'is-live'));
+    const st = ScrollTrigger.create({
+      trigger: bp, start: 'top 80%', end: 'bottom 10%',
+      onToggle: (self) => (self.isActive ? tl.play() : tl.pause()),
+    });
+    return () => {
+      st.kill();
+      tl.kill();
+      list.classList.remove('is-static', 'is-auto');
+      steps.forEach((li) => li.classList.remove('is-current'));
+      bp.classList.remove('is-racks', 'is-live');
+    };
   });
 }

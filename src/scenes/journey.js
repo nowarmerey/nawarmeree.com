@@ -7,9 +7,9 @@ import { svgEl, placeOnPath } from '../lib/svg.js';
 
 /**
  * @param {HTMLElement} root  #journey
- * @param {{ reduced: boolean }} opts
+ * @param {{ reduced: boolean, mm: gsap.MatchMedia }} opts
  */
-export function initJourney(root, { reduced }) {
+export function initJourney(root, { reduced, mm }) {
   const { $ } = scope(root);
   // faint dot field as a hint of a map
   const dots = $('#flightDots');
@@ -41,9 +41,16 @@ export function initJourney(root, { reduced }) {
     return;
   }
 
-  gsap.timeline({ scrollTrigger: { trigger: $('.flight'), start: 'top 75%', end: 'bottom 25%', scrub: 0.8 } })
+  const fly = (vars) => gsap.timeline(vars)
     .to(fillPath, { strokeDashoffset: 0, ease: 'none' }, 0)
     .to(flight, { p: 1, ease: 'none', onUpdate: movePlane }, 0);
+  // desktop: the scroll flies the plane; phones: it takes off by itself once the map is in view
+  mm.add('(min-width: 901px)', () => {
+    fly({ scrollTrigger: { trigger: $('.flight'), start: 'top 75%', end: 'bottom 25%', scrub: 0.8 } });
+  });
+  mm.add('(max-width: 900px)', () => {
+    fly({ paused: true, defaults: { duration: 2.6, ease: 'power1.inOut' }, scrollTrigger: { trigger: $('.flight'), start: 'top 80%', once: true, onEnter: (self) => self.animation.play() } });
+  });
 
   ScrollTrigger.create({
     trigger: stamp, start: 'top 85%', once: true,
