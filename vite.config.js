@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { defineConfig } from 'vite';
 import { renderPage } from './src/render.js';
-import { LANG_PATHS, SITE } from './src/content.js';
+import { LANG_PATHS, SITE, CONTACT } from './src/content.js';
 import { renderLegal, LEGAL_PAGES, legalComplete } from './src/legal.js';
 
 /**
@@ -103,6 +103,16 @@ function portfolioPages() {
       const headers = ['/*', ...Object.entries(SECURITY_HEADERS).map(([k, v]) => `  ${k}: ${v}`)];
       for (const [pattern, value] of Object.entries(CACHE_RULES)) headers.push(pattern, `  Cache-Control: ${value}`);
       writeFile(path.join(outDir, '_headers'), `${headers.join('\n')}\n`);
+
+      // RFC 9116: Expires must be less than a year ahead, so it is renewed with every deploy
+      const expires = new Date(Date.now() + 364 * 24 * 3600 * 1000).toISOString();
+      writeFile(path.join(outDir, '.well-known', 'security.txt'), [
+        `Contact: mailto:${CONTACT.email}`,
+        `Expires: ${expires}`,
+        'Preferred-Languages: de, en, ar',
+        `Canonical: ${SITE}/.well-known/security.txt`,
+        '',
+      ].join('\n'));
 
       const urls = Object.values(LANG_PATHS).map((route) => `  <url>
     <loc>${SITE}${route}</loc>

@@ -1,16 +1,10 @@
 // Chapter 2: a 4-floor plant is wired up floor by floor while the visitor scrolls (pinned scene).
 import { gsap } from 'gsap';
 import { scope } from '../lib/scene.js';
+import { svgEl as el } from '../lib/svg.js';
 
-const NS = 'http://www.w3.org/2000/svg';
 const CX = 300, HW = 200, HH = 80, FLOOR_GAP = 110, BASE_Y = 500, FLOORS = 4;
 
-const el = (tag, attrs = {}, parent) => {
-  const node = document.createElementNS(NS, tag);
-  Object.entries(attrs).forEach(([k, v]) => node.setAttribute(k, v));
-  parent?.appendChild(node);
-  return node;
-};
 const floorY = (i) => BASE_Y - i * FLOOR_GAP;
 // isometric point on floor i; s → towards right corner, t → towards left corner
 const P = (i, s, t) => [CX + HW * s - HW * t, floorY(i) - HH + HH * s + HH * t];
@@ -123,57 +117,64 @@ export function initInfra(root, { reduced, mm }) {
   gsap.set(g.shield, { fillOpacity: 0 });
   gsap.set(g.packets.map((p) => p.node), { opacity: 0 });
 
+  // Each step builds its own timeline with positions relative to its start. The master timeline places
+  // them one after another under a label, so adding, removing or re-timing a step never shifts the others.
+  /** @type {Array<() => gsap.core.Timeline>} */
+  const STEP_SCENES = [
+    // 1 · floors
+    () => {
+      const t = gsap.timeline();
+      g.floors.forEach((f, i) => {
+        t.to(f, { opacity: 1, duration: 0.1 }, i * 0.2)
+          .to(f.querySelectorAll('polygon'), { strokeDashoffset: 0, duration: 0.5 }, i * 0.2);
+      });
+      return t.to(g.pillars, { strokeDashoffset: 0, duration: 0.5, stagger: 0.03 }, 0.3)
+        .to(counters, { floors: 4, duration: 0.8, onUpdate: renderHud }, 0.1);
+    },
+    // 2 · server rooms
+    () => gsap.timeline()
+      .to(g.racks, { opacity: 1, y: 0, duration: 0.4, stagger: 0.12, ease: 'back.out(2)' }, 0)
+      .to(g.leds, { fill: '#ffffff', duration: 0.05, stagger: { each: 0.02, from: 'random' } }, 0.3),
+    // 3 · cabling + wifi
+    () => gsap.timeline()
+      .to(g.cables, { strokeDashoffset: 0, duration: 0.6, stagger: 0.12 }, 0)
+      .to(g.wifi, { opacity: 1, scale: 1, duration: 0.4, stagger: 0.1, ease: 'back.out(2)' }, 0.5),
+    // 4 · devices light up
+    () => gsap.timeline()
+      .to(g.devices, {
+        opacity: 1, duration: 0.05, stagger: { each: 0.012, from: 'random' },
+        onStart: () => g.devices.forEach((d) => d.classList.add('is-on')),
+        onReverseComplete: () => g.devices.forEach((d) => d.classList.remove('is-on')),
+      }, 0)
+      .to(counters, { devices: 250, duration: 1, ease: 'none', onUpdate: renderHud }, 0),
+    // 5 · firewall shield blocks incoming packets
+    () => {
+      const t = gsap.timeline()
+        .to(g.shield, { strokeDashoffset: 0, duration: 0.7, ease: 'power2.inOut' }, 0)
+        .to(g.shield, { fillOpacity: 1, duration: 0.4 }, 0.4);
+      g.packets.forEach((p, k) => {
+        const at = 0.2 + k * 0.08;
+        t.to(p.node, { opacity: 1, duration: 0.05 }, at)
+          .to(p.node, { attr: { cx: CX + Math.cos(p.a) * 268, cy: 330 + Math.sin(p.a) * 300 }, duration: 0.35, ease: 'power1.in' }, at)
+          .to(p.node, { attr: { r: 14 }, opacity: 0, duration: 0.2 }, at + 0.35);
+      });
+      return t;
+    },
+    // 6 · automation
+    () => gsap.timeline()
+      .to(counters, { time: 40, duration: 0.8, ease: 'power2.inOut', onUpdate: renderHud }, 0)
+      .to(g.leds, { fill: '#39ff9c', duration: 0.05, stagger: 0.01 }, 0),
+  ];
+
   const tl = gsap.timeline({ defaults: { ease: 'power2.out' }, paused: true });
-  const showStep = (i, at) => {
-    tl.to(steps[i], { autoAlpha: 1, y: 0, duration: 0.35 }, at);
-    if (i > 0) tl.to(steps[i - 1], { autoAlpha: 0, y: -24, duration: 0.3 }, at - 0.05);
-  };
-
-  // 1 · floors
-  showStep(0, 0);
-  g.floors.forEach((f, i) => {
-    tl.to(f, { opacity: 1, duration: 0.1 }, i * 0.2)
-      .to(f.querySelectorAll('polygon'), { strokeDashoffset: 0, duration: 0.5 }, i * 0.2);
+  STEP_SCENES.forEach((build, i) => {
+    const label = `step${i + 1}`;
+    tl.addLabel(label, i === 0 ? 0 : '+=0.1');
+    if (i > 0) tl.to(steps[i - 1], { autoAlpha: 0, y: -24, duration: 0.3, ease: 'power2.out' }, `${label}-=0.05`);
+    tl.to(steps[i], { autoAlpha: 1, y: 0, duration: 0.35, ease: 'power2.out' }, label)
+      .add(build(), `${label}+=0.1`);
   });
-  tl.to(g.pillars, { strokeDashoffset: 0, duration: 0.5, stagger: 0.03 }, 0.3)
-    .to(counters, { floors: 4, duration: 0.8, onUpdate: renderHud }, 0.1);
-
-  // 2 · server rooms
-  showStep(1, 1.2);
-  tl.to(g.racks, { opacity: 1, y: 0, duration: 0.4, stagger: 0.12, ease: 'back.out(2)' }, 1.3)
-    .to(g.leds, { fill: '#ffffff', duration: 0.05, stagger: { each: 0.02, from: 'random' } }, 1.6);
-
-  // 3 · cabling + wifi
-  showStep(2, 2.3);
-  tl.to(g.cables, { strokeDashoffset: 0, duration: 0.6, stagger: 0.12 }, 2.4)
-    .to(g.wifi, { opacity: 1, scale: 1, duration: 0.4, stagger: 0.1, ease: 'back.out(2)' }, 2.9);
-
-  // 4 · devices light up
-  showStep(3, 3.5);
-  tl.to(g.devices, {
-    opacity: 1, duration: 0.05, stagger: { each: 0.012, from: 'random' },
-    onStart: () => g.devices.forEach((d) => d.classList.add('is-on')),
-    onReverseComplete: () => g.devices.forEach((d) => d.classList.remove('is-on')),
-  }, 3.6)
-    .to(counters, { devices: 250, duration: 1, ease: 'none', onUpdate: renderHud }, 3.6);
-
-  // 5 · firewall shield blocks incoming packets
-  showStep(4, 4.8);
-  tl.to(g.shield, { strokeDashoffset: 0, duration: 0.7, ease: 'power2.inOut' }, 4.9)
-    .to(g.shield, { fillOpacity: 1, duration: 0.4 }, 5.3);
-  g.packets.forEach((p, k) => {
-    const hitX = 300 + Math.cos(p.a) * 268, hitY = 330 + Math.sin(p.a) * 300;
-    const at = 5.1 + k * 0.08;
-    tl.to(p.node, { opacity: 1, duration: 0.05 }, at)
-      .to(p.node, { attr: { cx: hitX, cy: hitY }, duration: 0.35, ease: 'power1.in' }, at)
-      .to(p.node, { attr: { r: 14 }, opacity: 0, duration: 0.2 }, at + 0.35);
-  });
-
-  // 6 · automation
-  showStep(5, 6.1);
-  tl.to(counters, { time: 40, duration: 0.8, ease: 'power2.inOut', onUpdate: renderHud }, 6.2)
-    .to(g.leds, { fill: '#39ff9c', duration: 0.05, stagger: 0.01 }, 6.2)
-    .to({}, { duration: 0.5 });
+  tl.to({}, { duration: 0.5 }); // hold the final state before the pin releases
 
   gsap.set(steps, { autoAlpha: 0, y: 24 });
   renderHud();

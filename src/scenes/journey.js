@@ -2,8 +2,8 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { scope } from '../lib/scene.js';
+import { svgEl, placeOnPath } from '../lib/svg.js';
 
-const NS = 'http://www.w3.org/2000/svg';
 
 /**
  * @param {HTMLElement} root  #journey
@@ -17,9 +17,7 @@ export function initJourney(root, { reduced }) {
     for (let y = 10; y < 260; y += 26) {
       const n = Math.sin(x * 0.012) * Math.cos(y * 0.03) + Math.sin((x + y) * 0.007);
       if (n > 0.2) {
-        const c = document.createElementNS(NS, 'circle');
-        c.setAttribute('cx', String(x)); c.setAttribute('cy', String(y)); c.setAttribute('r', '1.6');
-        dots.appendChild(c);
+        svgEl('circle', { cx: x, cy: y, r: 1.6 }, dots);
       }
     }
   }
@@ -30,20 +28,22 @@ export function initJourney(root, { reduced }) {
 
   const stamp = $('.stamp');
   const flightPath = /** @type {SVGPathElement} */ ($('#flightPath'));
+  const plane = /** @type {SVGGElement} */ ($('#plane'));
+  const flightLength = flightPath.getTotalLength();
+  const flight = { p: 0 };
+  const movePlane = () => placeOnPath(plane, flightPath, flight.p, { rotate: true, length: flightLength });
+  movePlane();
 
   if (reduced) {
     gsap.set(fillPath, { strokeDashoffset: 0 });
-    gsap.set($('#plane'), { x: 880, y: 120 });
+    placeOnPath(plane, flightPath, 1, { rotate: true, length: flightLength });
     gsap.set(stamp, { opacity: 1 });
     return;
   }
 
   gsap.timeline({ scrollTrigger: { trigger: $('.flight'), start: 'top 75%', end: 'bottom 25%', scrub: 0.8 } })
     .to(fillPath, { strokeDashoffset: 0, ease: 'none' }, 0)
-    .to($('#plane'), {
-      ease: 'none',
-      motionPath: { path: flightPath, align: flightPath, alignOrigin: [0.5, 0.5], autoRotate: true },
-    }, 0);
+    .to(flight, { p: 1, ease: 'none', onUpdate: movePlane }, 0);
 
   ScrollTrigger.create({
     trigger: stamp, start: 'top 85%', once: true,

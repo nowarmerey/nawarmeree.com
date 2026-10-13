@@ -11,7 +11,6 @@ import '@fontsource/ibm-plex-sans-arabic/arabic-700.css';
 
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import Lenis from 'lenis';
 
 import { mount } from './lib/scene.js';
@@ -25,7 +24,7 @@ import { initSkills } from './scenes/skills.js';
 import { initProjects } from './scenes/projects.js';
 import { initContact } from './scenes/contact.js';
 
-gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
+gsap.registerPlugin(ScrollTrigger);
 
 // the story always starts at the beginning (unless a #section was linked)
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';

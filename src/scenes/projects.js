@@ -3,14 +3,8 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { t, applyTexts } from '../i18n.js';
 import { scope } from '../lib/scene.js';
+import { svgEl, placeOnPath } from '../lib/svg.js';
 
-const NS = 'http://www.w3.org/2000/svg';
-const svgEl = (tag, attrs, parent) => {
-  const n = document.createElementNS(NS, tag);
-  Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v));
-  parent.appendChild(n);
-  return n;
-};
 
 // vector-space coordinates (viewBox 400×260)
 const CHUNK_VECS = [[90, 70], [262, 96], [70, 190], [330, 200], [292, 128], [160, 210], [240, 70], [150, 120]];
@@ -54,12 +48,6 @@ function ragTimeline(parts, { $, $$ }) {
     qText.textContent = q.slice(0, Math.round(typed.q * q.length));
     aText.textContent = a.slice(0, Math.round(typed.a * a.length));
   };
-  const STEP_AT = [0, 0.8, 1.5, 2.7, 3.9];
-  const markStep = (time) => {
-    const i = STEP_AT.filter((at) => time >= at).length - 1;
-    steps.forEach((s, k) => { s.classList.toggle('is-active', k === i); s.classList.toggle('is-done', k < i); });
-  };
-
   const { noise, links, vecs, q, chunks } = parts;
   const doc = $('#ragDoc');
   gsap.set(doc, { opacity: 0, y: 80, scale: 0.7 });
@@ -67,35 +55,59 @@ function ragTimeline(parts, { $, $$ }) {
   gsap.set([...noise, ...vecs, q, ...links], { opacity: 0 });
   gsap.set([$('#ragQuery'), $('#ragAnswer')], { opacity: 0, y: 10 });
 
-  const tl = gsap.timeline({ defaults: { ease: 'power2.out' }, onUpdate: () => markStep(tl.time()) });
-  // 1 upload
-  tl.to(doc, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: 'back.out(1.6)' }, 0)
-  // 2 chunk: document splits into pieces
-    .to(chunks, {
-      opacity: 1, duration: 0.3,
-      left: (i) => `${50 + ((i % 2) - 0.5) * 18}%`, top: (i) => `${32 + Math.floor(i / 2) * 12}%`,
-      stagger: 0.04,
-    }, 0.8)
-    .to(doc, { opacity: 0, scale: 1.1, duration: 0.3 }, 0.9)
-  // 3 embed: pieces fly into vector space and become points
-    .to(chunks, {
-      left: (i) => `${(CHUNK_VECS[i][0] / 400) * 100}%`, top: (i) => `${(CHUNK_VECS[i][1] / 260) * 100}%`,
-      scale: 0.15, duration: 0.6, stagger: 0.04, ease: 'power3.inOut',
-    }, 1.5)
-    .to(chunks, { opacity: 0, duration: 0.15 }, 2.2)
-    .to(vecs, { opacity: 1, duration: 0.2, stagger: 0.03 }, 2.15)
-    .to(noise, { opacity: 1, duration: 0.3, stagger: 0.01 }, 2.2)
-  // 4 retrieve: a question is asked, nearest neighbours light up
-    .to($('#ragQuery'), { opacity: 1, y: 0, duration: 0.3 }, 2.7)
-    .to(typed, { q: 1, duration: 0.6, ease: 'none', onUpdate: renderTyped }, 2.8)
-    .to(q, { opacity: 1, duration: 0.2 }, 3.3)
-    .to(links, { opacity: 1, duration: 0.3, stagger: 0.1 }, 3.4)
-    .call(() => HITS.forEach((h) => vecs[h].classList.add('is-hit')), null, 3.5)
-    .call(() => HITS.forEach((h) => vecs[h].classList.remove('is-hit')), null, 3.49)
-  // 5 answer
-    .to($('#ragAnswer'), { opacity: 1, y: 0, duration: 0.3 }, 3.9)
-    .to(typed, { a: 1, duration: 0.8, ease: 'none', onUpdate: renderTyped }, 4.0)
-    .to({}, { duration: 0.5 });
+
+  const query = $('#ragQuery');
+  const answer = $('#ragAnswer');
+  const setHits = (on) => HITS.forEach((h) => vecs[h].classList.toggle('is-hit', on));
+
+  // One labelled sub-timeline per pipeline step (positions relative to the step start).
+  /** @type {Array<() => gsap.core.Timeline>} */
+  const STEP_SCENES = [
+    // 1 upload
+    () => gsap.timeline().to(doc, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: 'back.out(1.6)' }),
+    // 2 chunk: document splits into pieces
+    () => gsap.timeline()
+      .to(chunks, {
+        opacity: 1, duration: 0.3, stagger: 0.04,
+        left: (i) => `${50 + ((i % 2) - 0.5) * 18}%`, top: (i) => `${32 + Math.floor(i / 2) * 12}%`,
+      }, 0)
+      .to(doc, { opacity: 0, scale: 1.1, duration: 0.3 }, 0.1),
+    // 3 embed: pieces fly into vector space and become points
+    () => gsap.timeline()
+      .to(chunks, {
+        left: (i) => `${(CHUNK_VECS[i][0] / 400) * 100}%`, top: (i) => `${(CHUNK_VECS[i][1] / 260) * 100}%`,
+        scale: 0.15, duration: 0.6, stagger: 0.04, ease: 'power3.inOut',
+      }, 0)
+      .to(vecs, { opacity: 1, duration: 0.2, stagger: 0.03 }, 0.65)
+      .to(chunks, { opacity: 0, duration: 0.15 }, 0.7)
+      .to(noise, { opacity: 1, duration: 0.3, stagger: 0.01 }, 0.7),
+    // 4 retrieve: a question is asked, nearest neighbours light up
+    () => gsap.timeline()
+      .to(query, { opacity: 1, y: 0, duration: 0.3 }, 0)
+      .to(typed, { q: 1, duration: 0.6, ease: 'none', onUpdate: renderTyped }, 0.1)
+      .to(q, { opacity: 1, duration: 0.2 }, 0.6)
+      .to(links, {
+        opacity: 1, duration: 0.3, stagger: 0.1,
+        onStart: () => setHits(true), onReverseComplete: () => setHits(false),
+      }, 0.7),
+    // 5 answer
+    () => gsap.timeline()
+      .to(answer, { opacity: 1, y: 0, duration: 0.3 }, 0)
+      .to(typed, { a: 1, duration: 0.8, ease: 'none', onUpdate: renderTyped }, 0.1),
+  ];
+
+  const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
+  STEP_SCENES.forEach((build, i) => {
+    tl.addLabel(`step${i + 1}`, i === 0 ? 0 : '+=0.2').add(build(), `step${i + 1}`);
+  });
+  tl.to({}, { duration: 0.5 });
+
+  // the pills follow the playhead, derived from the labels (no duplicated timings)
+  const starts = STEP_SCENES.map((_, i) => tl.labels[`step${i + 1}`]);
+  tl.eventCallback('onUpdate', () => {
+    const active = starts.filter((at) => tl.time() >= at).length - 1;
+    steps.forEach((el, k) => { el.classList.toggle('is-active', k === active); el.classList.toggle('is-done', k < active); });
+  });
   return { tl, renderTyped };
 }
 
@@ -183,12 +195,19 @@ export function initProjects(root, { reduced, mm }) {
   arch.wires.forEach((w, i) => {
     const up = svgEl('circle', { r: 4, class: 'pkt' }, arch.svg);
     const down = svgEl('circle', { r: 4, class: 'pkt pkt--down' }, arch.svg);
-    const path = { path: w, align: w, alignOrigin: [0.5, 0.5] };
+    const wire = /** @type {SVGPathElement} */ (w);
+    const length = wire.getTotalLength();
     gsap.set([up, down], { opacity: 0 });
-    loops.push(
-      gsap.fromTo(up, { opacity: 1 }, { motionPath: path, duration: 1.6, repeat: -1, repeatDelay: 0.6 + i * 0.3, ease: 'power1.inOut', delay: 1 + i * 0.2, paused: true }),
-      gsap.fromTo(down, { opacity: 1 }, { motionPath: { ...path, start: 1, end: 0 }, duration: 1.6, repeat: -1, repeatDelay: 0.9 + i * 0.2, ease: 'power1.inOut', delay: 1.8 + i * 0.25, paused: true }),
-    );
+    // up: app → API (path start → end); down: API → app (end → start)
+    const travel = (dot, from, delay, repeatDelay) => {
+      const s = { p: 0 };
+      return gsap.to(s, {
+        p: 1, duration: 1.6, ease: 'power1.inOut', repeat: -1, delay, repeatDelay, paused: true,
+        onStart: () => gsap.set(dot, { opacity: 1 }),
+        onUpdate: () => placeOnPath(dot, wire, from === 0 ? s.p : 1 - s.p, { length }),
+      });
+    };
+    loops.push(travel(up, 0, 1 + i * 0.2, 0.6 + i * 0.3), travel(down, 1, 1.8 + i * 0.25, 0.9 + i * 0.2));
   });
   ScrollTrigger.create({
     trigger: arch.svg, start: 'top 80%', once: true,

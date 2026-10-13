@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { isRTL, applyTexts } from '../i18n.js';
 import { SKILLS, SKILL_HUBS } from '../content.js';
 import { scope } from '../lib/scene.js';
+import { svgEl } from '../lib/svg.js';
 
 const HUB_Y = { sada: 14, berger: 38, cobra: 62, lexai: 86 };
 
@@ -54,8 +55,7 @@ export function initSkills(root, { reduced }) {
   // lines (one per skill→hub link)
   const lines = [];
   nodes.forEach((n) => n.hubs.forEach((h) => {
-    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    svg.appendChild(line);
+    const line = svgEl('line', {}, svg);
     const rec = { line, skill: n, hub: hubNodes[h] };
     n.lines.push(rec);
     hubNodes[h].lines.push(rec);
@@ -127,12 +127,9 @@ export function initSkills(root, { reduced }) {
   const sendPacket = () => {
     if (trafficOn && onScreen && lines.length && document.visibilityState === 'visible' && svg.getBoundingClientRect().height) {
       const { line } = lines[(Math.random() * lines.length) | 0];
-      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      c.setAttribute('r', '2.5'); c.setAttribute('class', 'packet');
       const x1 = +line.getAttribute('x1'), y1 = +line.getAttribute('y1');
       const x2 = +line.getAttribute('x2'), y2 = +line.getAttribute('y2');
-      c.setAttribute('cx', String(x1)); c.setAttribute('cy', String(y1));
-      svg.appendChild(c);
+      const c = svgEl('circle', { r: 2.5, class: 'packet', cx: x1, cy: y1 }, svg);
       gsap.to(c, { attr: { cx: x2, cy: y2 }, duration: 1.2, ease: 'power1.inOut', onComplete: () => c.remove() });
     }
     gsap.delayedCall(0.35, sendPacket);

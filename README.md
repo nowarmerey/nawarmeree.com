@@ -20,9 +20,10 @@ Respects `prefers-reduced-motion` (static version, no smooth scroll).
 
 Privacy & security: self-hosted fonts, no cookies, no tracking, no browser storage, strict CSP.
 Security/cache headers are defined once in `vite.config.js` → written to `dist/_headers` (Netlify) and used by `vite preview`.
+`/.well-known/security.txt` (RFC 9116) is generated on every build so its `Expires` never goes stale.
 
 ## Stack
-Vite · vanilla JS (type-checked with `// @ts-check`-style JSDoc via `tsc`) · GSAP (ScrollTrigger, MotionPath) · Lenis
+Vite · vanilla JS (JSDoc, type-checked by `tsc --checkJs`) · GSAP (ScrollTrigger) · Lenis
 
 ## Architecture
 ```
@@ -32,7 +33,9 @@ src/
   legal.js          Impressum / Datenschutz pages
   i18n.js           runtime lookup for nodes created after pre-rendering
   lib/scene.js      mount(name, root, init) — scene isolation; scope(root) — $ / $$ bound to a root
-  scenes/*.js       one file per chapter; each receives its own root element and queries only inside it
+  lib/svg.js        svgEl() factory + placeOnPath() (attribute-based, CSP-safe path following)
+  scenes/*.js       one file per chapter; each receives its own root element and queries only inside it.
+                    Scroll scenes are built from labelled step timelines (step1, step2, …) — no absolute timings.
   styles/           base (tokens, layout chrome) + sections
 test/               i18n parity + pre-render guarantees (tokens, empty texts, hreflang, JSON-LD, CSP-safe markup)
 tools/cv/           sanitised CV generator
