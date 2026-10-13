@@ -33,7 +33,7 @@ function leds(parent, n, extra = '') {
 function buildFront(front, unit) {
   if (unit.type === 'patch') {
     const ports = div('unit__ports', front);
-    for (let k = 0; k < 12; k++) div('port', ports).appendChild(Object.assign(document.createElement('i'), { className: 'led' }));
+    for (let k = 0; k < 12; k++) div('rack-port', ports).appendChild(Object.assign(document.createElement('i'), { className: 'led' }));
     return;
   }
   if (unit.type === 'blank') return;

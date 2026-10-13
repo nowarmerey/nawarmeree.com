@@ -90,8 +90,8 @@
 .unit--project:has(.unit__bays) .unit__front { flex-wrap: wrap; align-content: center; }
 .unit__leds { display: flex; gap: 4px; }
 .unit__ports { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3px; width: 100%; }
-.port { position: relative; height: 10px; background: #06080c; border: 1px solid #2b3549; border-radius: 1px; }
-.port .led { position: absolute; right: 1px; top: 1px; width: 3px; height: 3px; }
+.rack-port { position: relative; height: 10px; background: #06080c; border: 1px solid #2b3549; border-radius: 1px; }
+.rack-port .led { position: absolute; right: 1px; top: 1px; width: 3px; height: 3px; }
 .unit__battery { display: flex; gap: 3px; margin-inline-start: auto; }
 .unit__battery .led { width: 10px; height: 6px; border-radius: 1px; }
 
