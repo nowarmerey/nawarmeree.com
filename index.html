@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nawar Meree — System Administrator & SaaS Developer</title>
+  <meta name="description" content="From server rooms to the cloud: system administration, networks, SaaS and AI by Nawar Meree." />
+  <meta name="theme-color" content="#07090d" />
+  <link rel="canonical" href="https://nawarmeree.com/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://nawarmeree.com/" />
+  <meta property="og:title" content="Nawar Meree — From the server room to the cloud" />
+  <meta property="og:description" content="System administrator, network engineer and SaaS developer based in Leverkusen, Germany." />
+  <meta property="og:image" content="https://nawarmeree.com/img/og.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/styles/base.css" />
+  <link rel="stylesheet" href="/src/styles/sections.css" />
+</head>
+<body>
+  <!-- ═════ Boot overlay ═════ -->
+  <div class="boot" id="boot" aria-hidden="true">
+    <pre class="boot__log" id="bootLog"></pre>
+    <span class="boot__skip" data-i18n="boot.skip">click to skip</span>
+  </div>
+
+  <div class="cursor" id="cursor" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+
+  <!-- ═════ Header ═════ -->
+  <header class="header" id="header">
+    <a class="logo" href="#top" aria-label="Nawar Meree"><span class="logo__mark">&lt;/&gt;</span><span class="logo__text">nawar</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="#about" data-i18n="nav.about">About</a>
+      <a href="#infra" data-i18n="nav.infra">Infrastructure</a>
+      <a href="#journey" data-i18n="nav.journey">Journey</a>
+      <a href="#skills" data-i18n="nav.skills">Skills</a>
+      <a href="#projects" data-i18n="nav.projects">Projects</a>
+      <a href="#contact" data-i18n="nav.contact">Contact</a>
+    </nav>
+    <div class="langs" role="group" aria-label="Language">
+      <button data-lang-btn="ar" aria-pressed="false">ع</button>
+      <button data-lang-btn="de" aria-pressed="false">DE</button>
+      <button data-lang-btn="en" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <!-- ═════ OSI rail: the thread that follows the visitor ═════ -->
+  <aside class="rail" id="rail" aria-hidden="true">
+    <div class="rail__track"><div class="rail__fill" id="railFill"><span class="rail__head"></span></div></div>
+    <ol class="rail__layers" id="railLayers"></ol>
+  </aside>
+  <div class="layer-chip" id="layerChip" aria-hidden="true"><b>L1</b> <span></span></div>
+
+  <main id="top">
+    <!-- ═════ HERO ═════ -->
+    <section class="hero" id="hero">
+      <div class="grid-bg" aria-hidden="true"></div>
+      <div class="hero__inner container">
+        <div class="hero__text">
+          <p class="hero__hello mono"><span class="prompt">$</span> <span data-i18n="hero.hello">Hi, I'm</span></p>
+          <h1 class="hero__name" id="heroName">Nawar Meree</h1>
+          <p class="hero__role mono"><span class="role-bracket">[</span><span id="heroRole"></span><span class="caret"></span><span class="role-bracket">]</span></p>
+          <p class="hero__tagline" data-i18n="hero.tagline"></p>
+          <p class="hero__loc mono"><span class="dot-live"></span><span data-i18n="hero.location"></span></p>
+          <div class="hero__cta">
+            <a class="btn btn--primary magnetic" href="#contact" data-i18n="hero.cta1"></a>
+            <a class="btn btn--ghost magnetic" href="#projects" data-i18n="hero.cta2"></a>
+          </div>
+        </div>
+        <div class="hero__visual">
+          <div class="avatar" id="avatar">
+            <div class="avatar__halo"></div>
+            <div class="avatar__ring"></div>
+            <img class="avatar__img" src="/img/avatar.webp" alt="Nawar Meree — illustration" width="796" height="900" />
+            <div class="avatar__scan"></div>
+            <span class="avatar__logo-glow"></span>
+            <svg class="hero__cable" id="heroCable" viewBox="0 0 100 300" preserveAspectRatio="none" aria-hidden="true">
+              <path id="heroCablePath" d="M2 2 C 2 90, 60 110, 60 200 S 30 280, 30 300" />
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-hint mono"><span data-i18n="hero.scroll"></span><i></i></div>
+    </section>
+
+    <!-- ═════ L1 · ABOUT ═════ -->
+    <section class="about section" id="about" data-layer="0">
+      <div class="container about__grid">
+        <div class="about__photo reveal">
+          <div class="photo-frame">
+            <img src="/img/photo.jpg" alt="Nawar Meree" width="600" height="600" loading="lazy" />
+            <span class="photo-frame__tag mono">nawar@real-life:~$</span>
+          </div>
+        </div>
+        <div class="about__text">
+          <p class="kicker mono reveal" data-i18n="about.kicker"></p>
+          <h2 class="title reveal" data-i18n="about.title"></h2>
+          <p class="lead reveal" data-i18n="about.body"></p>
+          <ul class="traits reveal" id="traits"></ul>
+        </div>
+      </div>
+      <div class="container">
+        <ul class="stats" id="stats"></ul>
+      </div>
+    </section>
+
+    <!-- ═════ L2-3 · INFRASTRUCTURE (pinned) ═════ -->
+    <section class="infra" id="infra" data-layer="2">
+      <div class="infra__pin">
+        <div class="container infra__head">
+          <p class="kicker mono" data-i18n="infra.kicker"></p>
+          <h2 class="title" data-i18n="infra.title"></h2>
+          <p class="sub mono" data-i18n="infra.sub"></p>
+        </div>
+        <div class="container infra__stage">
+          <div class="infra__scene">
+            <svg id="building" viewBox="0 0 600 620" aria-hidden="true"></svg>
+            <div class="hud mono" id="hud">
+              <div><b id="hudDevices">0</b><span data-i18n="infra.hud.0"></span></div>
+              <div><b id="hudFloors">0</b><span data-i18n="infra.hud.1"></span></div>
+              <div><b id="hudTime">100%</b><span data-i18n="infra.hud.2"></span></div>
+            </div>
+          </div>
+          <ol class="infra__steps" id="infraSteps"></ol>
+        </div>
+        <div class="infra__progress"><span id="infraProgress"></span></div>
+      </div>
+    </section>
+
+    <!-- ═════ L4 · JOURNEY ═════ -->
+    <section class="journey section" id="journey" data-layer="3">
+      <div class="container">
+        <p class="kicker mono reveal" data-i18n="journey.kicker"></p>
+        <h2 class="title reveal" data-i18n="journey.title"></h2>
+        <div class="flight reveal">
+          <svg class="flight__svg" viewBox="0 0 1000 260" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <g class="flight__dots" id="flightDots"></g>
+            <path id="flightPath" class="flight__path" d="M120 210 C 330 10, 670 10, 880 120" />
+            <path id="flightPathFill" class="flight__path-fill" d="M120 210 C 330 10, 670 10, 880 120" />
+            <circle class="flight__pin" cx="120" cy="210" r="7" />
+            <circle class="flight__pin flight__pin--to" cx="880" cy="120" r="7" />
+            <g id="plane"><path class="flight__plane" d="M-14 0 L10 -2 L14 0 L10 2 Z M-2 -1 L-8 -10 L-4 -10 L4 -1 Z M-2 1 L-8 10 L-4 10 L4 1 Z M-12 -1 L-15 -5 L-13 -5 L-9 -1 Z M-12 1 L-15 5 L-13 5 L-9 1 Z"/></g>
+          </svg>
+          <div class="flight__labels mono">
+            <span><b>34.73°N 36.72°E</b><em data-i18n="journey.from"></em></span>
+            <span><b>51.03°N 6.98°E</b><em data-i18n="journey.to"></em></span>
+          </div>
+        </div>
+        <ol class="timeline" id="timeline"></ol>
+      </div>
+    </section>
+
+    <!-- ═════ L5 · CREDENTIALS ═════ -->
+    <section class="creds section" id="credentials" data-layer="4">
+      <div class="container">
+        <p class="kicker mono reveal" data-i18n="credentials.kicker"></p>
+        <h2 class="title reveal" data-i18n="credentials.title"></h2>
+        <div class="creds__grid" id="credGrid"></div>
+        <div class="creds__foot reveal">
+          <p data-i18n="credentials.note"></p>
+          <a class="btn btn--ghost magnetic" id="requestDocs" href="#" data-i18n="credentials.request"></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═════ L6 · SKILLS ═════ -->
+    <section class="skills section" id="skills" data-layer="5">
+      <div class="container">
+        <p class="kicker mono reveal" data-i18n="skills.kicker"></p>
+        <h2 class="title reveal" data-i18n="skills.title"></h2>
+        <p class="sub reveal" data-i18n="skills.hint"></p>
+        <div class="topo reveal" id="topo">
+          <svg class="topo__lines" id="topoLines" aria-hidden="true"></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═════ L7 · PROJECTS ═════ -->
+    <section class="projects section" id="projects" data-layer="6">
+      <div class="cloud-bg" aria-hidden="true"></div>
+      <div class="container">
+        <p class="kicker mono reveal" data-i18n="projects.kicker"></p>
+        <h2 class="title reveal" data-i18n="projects.title"></h2>
+      </div>
+
+      <!-- LexAI: pinned RAG explainer -->
+      <article class="project project--lexai" id="lexai">
+        <div class="lexai__pin">
+          <div class="container project__grid">
+            <div class="project__info">
+              <h3 class="project__name">LexAI</h3>
+              <p class="project__tag mono" data-i18n="projects.lexai.tag"></p>
+              <p class="project__desc" data-i18n="projects.lexai.desc"></p>
+              <ul class="project__points" id="lexaiPoints"></ul>
+              <ul class="chips" id="lexaiTech"></ul>
+              <a class="btn btn--ghost magnetic" id="lexaiLink" target="_blank" rel="noopener" data-i18n="projects.lexai.code"></a>
+            </div>
+            <div class="rag tilt" id="rag">
+              <ol class="rag__steps mono" id="ragSteps"></ol>
+              <div class="rag__stage">
+                <div class="rag__doc" id="ragDoc"><span class="rag__doc-ext mono">PDF</span><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <div class="rag__chunks" id="ragChunks"></div>
+                <svg class="rag__space" id="ragSpace" viewBox="0 0 400 260" aria-hidden="true"></svg>
+                <div class="rag__query mono" id="ragQuery"><span class="prompt">?</span> <span id="ragQueryText"></span></div>
+                <div class="rag__answer" id="ragAnswer"><span class="mono">Gemini ›</span> <span id="ragAnswerText"></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Cobra SaaS -->
+      <article class="project project--cobra" id="cobra">
+        <div class="container project__grid project__grid--flip">
+          <div class="project__info reveal">
+            <h3 class="project__name">Cobra SaaS</h3>
+            <p class="project__tag mono" data-i18n="projects.cobra.tag"></p>
+            <p class="project__desc" data-i18n="projects.cobra.desc"></p>
+            <ul class="project__points" id="cobraPoints"></ul>
+            <ul class="chips" id="cobraTech"></ul>
+            <p class="private mono"><span class="lock">●</span> <span data-i18n="projects.cobra.private"></span></p>
+          </div>
+          <div class="arch tilt reveal">
+            <svg id="arch" viewBox="0 0 440 380" aria-hidden="true"></svg>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ═════ CONTACT ═════ -->
+    <section class="contact section" id="contact" data-layer="7">
+      <div class="container contact__grid">
+        <div class="contact__text">
+          <p class="kicker mono reveal" data-i18n="contact.kicker"></p>
+          <h2 class="title title--xl reveal" data-i18n="contact.title"></h2>
+          <p class="lead reveal" data-i18n="contact.sub"></p>
+          <div class="contact__links reveal">
+            <a class="btn btn--primary magnetic" id="mailBtn" data-i18n="contact.email"></a>
+            <a class="btn btn--ghost magnetic" id="ghBtn" target="_blank" rel="noopener" data-i18n="contact.github"></a>
+          </div>
+        </div>
+        <div class="contact__right">
+          <div class="port reveal" id="port">
+            <svg viewBox="0 0 240 150" aria-hidden="true">
+              <path class="port__cable" id="portCable" d="M120 -10 C 120 30, 120 40, 120 52" />
+              <rect class="port__body" x="60" y="52" width="120" height="78" rx="6" />
+              <path class="port__hole" d="M78 70 h84 v40 h-20 v10 h-44 v-10 h-20 Z" />
+              <g class="port__pins"><rect x="88" y="74" width="4" height="12"/><rect x="96" y="74" width="4" height="12"/><rect x="104" y="74" width="4" height="12"/><rect x="112" y="74" width="4" height="12"/><rect x="124" y="74" width="4" height="12"/><rect x="132" y="74" width="4" height="12"/><rect x="140" y="74" width="4" height="12"/><rect x="148" y="74" width="4" height="12"/></g>
+              <circle class="port__led" id="portLed" cx="74" cy="62" r="4" />
+              <circle class="port__led port__led--b" cx="166" cy="62" r="4" />
+            </svg>
+            <p class="port__status mono"><span class="dot-live"></span><span data-i18n="contact.status"></span></p>
+          </div>
+          <div class="term reveal" id="term">
+            <div class="term__bar"><i></i><i></i><i></i><span class="mono">nawar@nawarmeree.com</span></div>
+            <div class="term__body mono" id="termBody"></div>
+            <form class="term__form mono" id="termForm" autocomplete="off">
+              <label for="termInput" class="prompt">$</label>
+              <input id="termInput" spellcheck="false" data-i18n-attr="placeholder:contact.hint" />
+            </form>
+          </div>
+        </div>
+      </div>
+      <footer class="footer container mono">
+        <span>© 2026 · <span data-i18n="contact.footer"></span></span>
+        <span>nawarmeree.com</span>
+      </footer>
+    </section>
+  </main>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
